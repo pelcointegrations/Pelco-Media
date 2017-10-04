@@ -36,11 +36,11 @@
             }
         }
 
-        public void Start()
+        virtual public void Start()
         {
         }
 
-        public void Stop()
+        virtual public void Stop()
         {
         }
 

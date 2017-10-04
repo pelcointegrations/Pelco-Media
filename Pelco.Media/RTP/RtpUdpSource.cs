@@ -195,10 +195,10 @@ namespace Pelco.PDK.Media.RTP
                     if (bytesRead > 0)
                     {
                         byte[] data = new byte[bytesRead];
-                        System.Buffer.BlockCopy(_receiveBuffer, 0, data, 0, bytesRead);
+                        Buffer.BlockCopy(_receiveBuffer, 0, data, 0, bytesRead);
 
                         // Push buffer up stream.
-                        PushBuffer(new Pipeline.ByteBuffer(data));
+                        PushBuffer(new ByteBuffer(data));
                     }
                 }
                 catch (ObjectDisposedException)
