@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Pelco.PDK.Media.Pipeline;
+using System;
 using System.Collections.Immutable;
 
 namespace Pelco.PDK.Media.RTP
@@ -60,13 +61,13 @@ namespace Pelco.PDK.Media.RTP
 
         public ImmutableList<uint> CsrcIds { get; internal set; }
 
-        public Pipeline.ByteBuffer ExtensionData { get; internal set; }
+        public ByteBuffer ExtensionData { get; internal set; }
 
-        public Pipeline.ByteBuffer Payload { get; internal set; }
+        public ByteBuffer Payload { get; internal set; }
 
         #endregion
 
-        public static RtpPacket Decode(Pipeline.ByteBuffer buffer)
+        public static RtpPacket Decode(ByteBuffer buffer)
         {
             if (buffer.Length < MIN_RTP_PACKET_SIZE)
             {
@@ -114,6 +115,79 @@ namespace Pelco.PDK.Media.RTP
             packet.Payload = buffer.ReadSlice();
 
             return packet;
+        }
+
+        public static ByteBuffer Encode(RtpPacket packet, int fixedBlockSize)
+        {
+            int packetSize = MIN_RTP_PACKET_SIZE;
+
+            if (packet.HasExtensionHeader)
+            {
+                packetSize += (BYTES_IN_WORD + packet.ExtensionData.Length);
+            }
+
+            packetSize += packet.CsrcIds.Count * BYTES_IN_WORD;
+            packetSize += packet.Payload.Length;
+
+            int paddingSize = 0;
+            if (fixedBlockSize > 0)
+            {
+                // If padding modulus is > 0 then the padding is equal to:
+                // (global size of the compound RTP packet) mod (block size)
+                // Block size alignment might be necessary for some encryption algorithms
+                // RFC section 6.4.1
+                paddingSize = fixedBlockSize - (packetSize % fixedBlockSize);
+                if (paddingSize == fixedBlockSize)
+                {
+                    paddingSize = 0;
+                }
+            }
+            packetSize += paddingSize;
+
+            ByteBuffer buffer = new ByteBuffer(packetSize);
+
+            byte b = 0x00;
+
+            switch (packet.Version.Value())
+            {
+                case 1:
+                    b |= 0x40;
+                    break;
+
+                case 3:
+                    b |= 0xC0;
+                    break;
+
+                case 2:
+                default:
+                    b |= 0x80;
+                    break;
+            }
+
+            if (paddingSize > 0)
+            {
+                b |= 0x20;
+            }
+
+            if (packet.HasExtensionHeader)
+            {
+                b |= 0x10;
+            }
+
+            b |= (byte)packet.CsrcIds.Count;
+
+            buffer.WriteByte(b);
+
+            b = 0x00;
+            if (packet.Marker)
+            {
+                b |= 0x80;
+            }
+
+            b |= packet.PayloadType;
+            buffer.WriteByte(b);
+
+            return buffer;
         }
     }
 }

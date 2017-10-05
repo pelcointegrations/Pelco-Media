@@ -345,7 +345,7 @@ namespace Pelco.PDK.Media.Pipeline
 
                 // Lets trim the array since it was smaller
                 var copy = new byte[bytesRead];
-                System.Buffer.BlockCopy(result, 0, copy, 0, bytesRead);
+                Buffer.BlockCopy(result, 0, copy, 0, bytesRead);
 
                 return copy;
             }
