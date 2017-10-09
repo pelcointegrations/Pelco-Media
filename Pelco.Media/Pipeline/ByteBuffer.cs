@@ -168,6 +168,30 @@ namespace Pelco.PDK.Media.Pipeline
             }
         }
 
+        /// <summary>
+        /// Gets the actual start index of the buffer.  This an only be used by
+        /// classes within the context of this assembly.
+        /// </summary>
+        internal Int32 StartIndex
+        {
+            get
+            {
+                return _startIndex;
+            }
+        }
+
+        /// <summary>
+        /// Gets the underlying byte[].  This can only be used by classes within
+        /// the context of this assembly.
+        /// </summary>
+        internal byte[] Raw
+        {
+            get
+            {
+                return _buffer;
+            }
+        }
+
         public DateTime TimeReference { get; set; }
 
         public Int32 Channel { get; set; }
@@ -383,10 +407,20 @@ namespace Pelco.PDK.Media.Pipeline
                 return 0;
             }
 
-            System.Buffer.BlockCopy(_buffer, _position, buffer, offset, n);
+            Buffer.BlockCopy(_buffer, _position, buffer, offset, n);
             _position += n;
 
             return n;
+        }
+
+        public void Write(ByteBuffer buffer)
+        {
+            if (buffer == null)
+            {
+                throw new ArgumentNullException("Cannot write to Buffer provided buffer is null");
+            }
+
+            Write(buffer._buffer, buffer._startIndex, buffer._length);
         }
 
         public void Write(byte[] buffer, Int32 offset, Int32 count)
@@ -429,8 +463,55 @@ namespace Pelco.PDK.Media.Pipeline
                 _length = newPosition;
             }
 
-            System.Buffer.BlockCopy(buffer, offset, _buffer, _position, count);
+            Buffer.BlockCopy(buffer, offset, _buffer, _position, count);
             _position = newPosition;
+        }
+
+        public void WriteInt16(Int16 value)
+        {
+            var bytes = BitConverter.GetBytes(value);
+            Write(bytes, 0, bytes.Length);
+        }
+
+        public void WriteInt26NetworkOrder(Int16 value)
+        {
+            var bytes = BitConverter.GetBytes(IPAddress.HostToNetworkOrder(value));
+            Write(bytes, 0, bytes.Length);
+        }
+
+        public void WriteUInt16(UInt16 value)
+        {
+            var bytes = BitConverter.GetBytes(value);
+            Write(bytes, 0, bytes.Length);
+        }
+
+        public void WriteUInt16NetworkOrder(UInt16 value)
+        {
+            var bytes = BitConverter.GetBytes((UInt16)IPAddress.HostToNetworkOrder(value));
+            Write(bytes, 0, bytes.Length);
+        }
+
+        public void WriteInt32(Int32 value)
+        {
+            var bytes = BitConverter.GetBytes(value);
+            Write(bytes, 0, bytes.Length);
+        }
+
+        public void WriteInt32NetworkOrder(Int32 value)
+        {
+            var bytes = BitConverter.GetBytes(IPAddress.HostToNetworkOrder(value));
+            Write(bytes, 0, bytes.Length);
+        }
+
+        public void WriteUInt32(UInt32 value)
+        {
+            var bytes = BitConverter.GetBytes(value);
+            Write(bytes, 0, bytes.Length);
+        }
+
+        public void WriteUint32NetworkOrder(UInt32 value)
+        {
+            var byets = BitConverter.GetBytes((UInt32)IPAddress.HostToNetworkOrder(value));
         }
 
         public void WriteByte(byte value)

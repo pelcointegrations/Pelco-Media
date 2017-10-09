@@ -1,6 +1,7 @@
 ﻿using NLog;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -24,7 +25,7 @@ namespace Pelco.PDK.Media.RTSP
             Version = version;
         }
 
-        public static RtspMessage CreateNewMessage(string[] parts)
+        public static RtspMessage CreateNewMessage(string[] parts, IPEndPoint endpoint)
         {
             if (parts == null || parts.Length < 3)
             {
@@ -36,12 +37,18 @@ namespace Pelco.PDK.Media.RTSP
                 if (StartLineTest.IsMatch(parts[2]))
                 {
                     LOG.Debug($"Detected RtspRequest '{parts[0]} {parts[1]} {parts[2]}'");
-                    return new RtspRequest(parts);
+                    var request =  new RtspRequest(parts);
+                    request.RemoteEndpoint = endpoint;
+
+                    return request;
                 }
                 else if (StartLineTest.IsMatch(parts[0]))
                 {
                     LOG.Debug($"Detected RtspResponse '{parts[0]} {parts[1]} {parts[2]}'");
-                    return new RtspResponse(parts);
+                    var response = new RtspResponse(parts);
+                    response.RemoteEndpoint = endpoint;
+
+                    return response;
                 }
 
                 throw new RtspMessageParseException($"Received malformed RTSPMessage start line '{parts[0]} {parts[1]} {parts[2]}'");
@@ -176,6 +183,8 @@ namespace Pelco.PDK.Media.RTSP
                 _headers[RtspHeaders.Names.CONTENT_TYPE] = value;
             }
         }
+
+        public IPEndPoint RemoteEndpoint { get; private set; }
 
         public override string ToString()
         {

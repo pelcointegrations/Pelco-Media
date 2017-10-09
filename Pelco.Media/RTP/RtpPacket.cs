@@ -49,7 +49,7 @@ namespace Pelco.PDK.Media.RTP
 
         public bool HasExtensionHeader { get; internal set; }
 
-        public uint ExtensionHeaderData { get; internal set; }
+        public ushort ExtensionHeaderData { get; internal set; }
 
         public bool Marker { get; internal set; }
 
@@ -186,6 +186,27 @@ namespace Pelco.PDK.Media.RTP
 
             b |= packet.PayloadType;
             buffer.WriteByte(b);
+
+            buffer.WriteUInt16NetworkOrder(packet.SequenceNumber);
+            buffer.WriteUint32NetworkOrder(packet.Timestamp);
+            buffer.WriteUint32NetworkOrder(packet.SSRC);
+
+            if (!packet.CsrcIds.IsEmpty)
+            {
+                foreach (var csrc in packet.CsrcIds)
+                {
+                    buffer.WriteUint32NetworkOrder(csrc);
+                }
+            }
+
+            if (packet.HasExtensionHeader)
+            {
+                buffer.WriteUInt16NetworkOrder(packet.ExtensionHeaderData);
+                buffer.WriteUInt16NetworkOrder((UInt16)(packet.ExtensionData.Length / BYTES_IN_WORD));
+                buffer.Write(packet.ExtensionData);
+            }
+
+            buffer.Write(packet.Payload);
 
             return buffer;
         }

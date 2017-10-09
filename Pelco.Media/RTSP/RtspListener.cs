@@ -28,7 +28,7 @@ namespace Pelco.PDK.Media.RTSP
         {
             _connection = connection ?? throw new ArgumentNullException("Transport cannot be null");
             _rtpQueue = new BlockingCollection<ByteBuffer>();
-            _decoder = new RtspMessageDecoder(_rtpQueue);
+            _decoder = new RtspMessageDecoder(_rtpQueue, _connection.Endpoint);
             _sources = new ConcurrentDictionary<int, RtpInterleaveMediaSource>();
         }
 

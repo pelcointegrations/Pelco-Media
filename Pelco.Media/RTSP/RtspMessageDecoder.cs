@@ -23,16 +23,18 @@ namespace Pelco.PDK.Media.RTSP
         private ReadingState _state;
         private RtspMessage _message;
         private LineReader _lineReader;
+        private IPEndPoint _remoteEndpoint;
         private InterleavedData _interleavedPacket;
         private BlockingCollection<ByteBuffer> _rtpQueue;
 
-        public RtspMessageDecoder(BlockingCollection<ByteBuffer> rtpQueue)
+        public RtspMessageDecoder(BlockingCollection<ByteBuffer> rtpQueue, IPEndPoint remoteEndpoint)
         {
             _message = null;
             _chunkSize = 0;
             _bufferIdx = 0;
             _rtpQueue = rtpQueue;
             _interleavedPacket = null;
+            _remoteEndpoint = remoteEndpoint;
             _lineReader = new LineReader();
             _state = ReadingState.SkipControlChars;
         }
@@ -78,7 +80,7 @@ namespace Pelco.PDK.Media.RTSP
                                     }
                                     else
                                     {
-                                        _message = RtspMessage.CreateNewMessage(parts);
+                                        _message = RtspMessage.CreateNewMessage(parts, _remoteEndpoint);
                                         _state = ReadingState.ReadHeader;
                                     }
                                 }

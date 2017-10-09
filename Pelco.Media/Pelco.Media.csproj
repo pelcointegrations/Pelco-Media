@@ -60,12 +60,14 @@
     <Compile Include="Pipeline\ObjectTypeHandlerBase.cs" />
     <Compile Include="Pipeline\ObjectTypeSinkBase.cs" />
     <Compile Include="Pipeline\ObjectTypeToBufferTransformBase.cs" />
+    <Compile Include="Pipeline\Sinks\UdpSink.cs" />
     <Compile Include="Pipeline\SourceBase.cs" />
     <Compile Include="Pipeline\ITransform.cs" />
     <Compile Include="Pipeline\ObjectTypeSource.cs" />
     <Compile Include="Pipeline\TransformBase.cs" />
     <Compile Include="Pipeline\ObjectTypeTransformBase.cs" />
     <Compile Include="Pipeline\Transforms\BufferToRtpPacketTransform.cs" />
+    <Compile Include="Pipeline\Transforms\RtpPacketizer.cs" />
     <Compile Include="Pipeline\Transforms\RtpPayloadTransform.cs" />
     <Compile Include="Pipeline\Transforms\SsrcFilter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
