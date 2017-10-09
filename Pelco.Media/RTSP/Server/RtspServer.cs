@@ -81,7 +81,7 @@ namespace Pelco.Media.RTSP.Server
 
         private void Accept(object state)
         {
-            while (_stop.WaitOne(0))
+            while (!_stop.WaitOne(0))
             {
                 try
                 {
@@ -92,6 +92,8 @@ namespace Pelco.Media.RTSP.Server
                     LOG.Debug($"Accepted client connection from '{conn.RemoteAddress}'");
 
                     listener.RtspMessageReceived += Listener_RtspMessageReceived;
+                    listener.Start();
+
                     _listeners.Add(conn.RemoteAddress, listener);
                 }
                 catch (Exception e)
@@ -133,16 +135,18 @@ namespace Pelco.Media.RTSP.Server
         private async void HandleRequest(RtspRequest request)
         {
             RtspListener listener = null;
-            if (_listeners.TryGetValue(request.URI.Authority, out listener))
+            if (_listeners.TryGetValue(request.RemoteEndpoint.ToString(), out listener))
             {
                 await Task.Run(() =>
                 {
                     try
                     {
+                        int receivedCseq = request.CSeq;
                         var response = _dispatcher.Dispatch(request);
 
                         if (response != null)
                         {
+                            response.Headers[RtspHeaders.Names.CSEQ] = receivedCseq.ToString();
                             listener.SendResponse(response);
                         }
                     }
