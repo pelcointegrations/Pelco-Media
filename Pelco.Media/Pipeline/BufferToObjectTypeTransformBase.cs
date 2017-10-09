@@ -1,4 +1,4 @@
-﻿namespace Pelco.PDK.Media.Pipeline
+﻿namespace Pelco.Media.Pipeline
 {
     public abstract class BufferToObjectTypeTransformBase<T> : ObjectTypeSource<T>, ITransform
     {

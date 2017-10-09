@@ -1,12 +1,12 @@
 ﻿using NLog;
-using Pelco.PDK.Media.Pipeline;
+using Pelco.Media.Pipeline;
 using System;
 using System.Collections.Concurrent;
 using System.IO;
 using System.Net;
 using System.Text;
 
-namespace Pelco.PDK.Media.RTSP
+namespace Pelco.Media.RTSP
 {
     /// <summary>
     /// Decodes an RTSP message.  An RTSP message can be a request, response, or

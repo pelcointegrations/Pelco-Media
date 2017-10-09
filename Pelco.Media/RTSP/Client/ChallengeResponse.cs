@@ -1,7 +1,7 @@
-﻿using Pelco.PDK.Media.Common;
+﻿using Pelco.Media.Common;
 using System;
 
-namespace Pelco.PDK.Media.RTSP.Client
+namespace Pelco.Media.RTSP.Client
 {
     /// <summary>
     /// Base class used for generating a response to an RTSP WWW-Authenticate

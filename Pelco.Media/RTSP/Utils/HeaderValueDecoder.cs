@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Immutable;
 
-namespace Pelco.PDK.Media.RTSP.Utils
+namespace Pelco.Media.RTSP.Utils
 {
     /// <summary>
     /// Decodes header values of the form 'name=value, name2=value2, etc...' into

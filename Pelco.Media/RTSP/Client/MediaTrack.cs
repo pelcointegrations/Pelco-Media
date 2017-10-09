@@ -1,9 +1,9 @@
-﻿using Pelco.PDK.Media.RTSP.SDP;
-using Pelco.PDK.Media.Common;
+﻿using Pelco.Media.Common;
+using Pelco.Media.RTSP.SDP;
 using System;
 using System.Net;
 
-namespace Pelco.PDK.Media.RTSP.Client
+namespace Pelco.Media.RTSP.Client
 {
     public class MediaTrack
     {

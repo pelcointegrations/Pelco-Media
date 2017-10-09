@@ -1,8 +1,8 @@
 ﻿using NLog;
-using Pelco.PDK.Media.Pipeline;
-using Pelco.PDK.Media.RTSP;
+using Pelco.Media.Pipeline;
+using Pelco.Media.RTSP;
 
-namespace Pelco.PDK.Media.RTP
+namespace Pelco.Media.RTP
 {
     public class RtpInterleavedSource : IRtpSource
     {

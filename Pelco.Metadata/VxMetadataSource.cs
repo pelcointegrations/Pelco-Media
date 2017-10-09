@@ -1,10 +1,10 @@
 ﻿using NLog;
-using Pelco.PDK.Media.Pipeline;
-using Pelco.PDK.Media.Pipeline.Transforms;
-using Pelco.PDK.Media.RTP;
-using Pelco.PDK.Media.RTSP;
-using Pelco.PDK.Media.RTSP.Client;
-using Pelco.PDK.Media.Common;
+using Pelco.Media.Common;
+using Pelco.Media.Pipeline;
+using Pelco.Media.Pipeline.Transforms;
+using Pelco.Media.RTP;
+using Pelco.Media.RTSP;
+using Pelco.Media.RTSP.Client;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -12,7 +12,7 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Timers;
 
-namespace Pelco.PDK.Metadata
+namespace Pelco.Metadata
 {
     public class VxMetadataSource : IDisposable
     {

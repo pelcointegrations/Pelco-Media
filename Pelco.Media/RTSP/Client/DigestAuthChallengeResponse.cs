@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Linq;
 using System.Text;
-using Pelco.PDK.Media.Common;
 using System.Security.Cryptography;
+using Pelco.Media.Common;
 
-namespace Pelco.PDK.Media.RTSP.Client
+namespace Pelco.Media.RTSP.Client
 {
     /// <summary>
     /// A <see cref="ChallengeResponse"/> of type Digest.  This class will generate an Authentication

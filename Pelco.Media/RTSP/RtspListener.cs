@@ -1,12 +1,12 @@
 ﻿using NLog;
-using Pelco.PDK.Media.Pipeline;
+using Pelco.Media.Pipeline;
 using System;
 using System.Collections.Concurrent;
 using System.IO;
 using System.Net.Sockets;
 using System.Threading;
 
-namespace Pelco.PDK.Media.RTSP
+namespace Pelco.Media.RTSP
 {
     /// <summary>
     /// RTSP Listener.  A listener is used to listen for requests/responses

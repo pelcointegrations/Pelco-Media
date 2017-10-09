@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Pelco.PDK.Media.RTSP.SDP
+namespace Pelco.Media.RTSP.SDP
 {
     /// <summary>
     /// SDP parsing utilities

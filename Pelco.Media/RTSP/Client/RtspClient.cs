@@ -1,11 +1,11 @@
 ﻿using NLog;
-using Pelco.PDK.Media.Common;
+using Pelco.Media.Common;
 using System;
 using System.Collections.Concurrent;
 using System.Net;
 using System.Threading;
 
-namespace Pelco.PDK.Media.RTSP.Client
+namespace Pelco.Media.RTSP.Client
 {
     public class RtspClient : IDisposable
     {

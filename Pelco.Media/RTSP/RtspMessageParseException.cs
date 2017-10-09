@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Pelco.PDK.Media.RTSP
+namespace Pelco.Media.RTSP
 {
     class RtspMessageParseException : Exception
     {

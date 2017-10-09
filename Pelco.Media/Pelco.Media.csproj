@@ -7,8 +7,8 @@
     <ProjectGuid>{D2DBCFAD-A3E6-4850-A3FD-9160C150FA22}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Pelco.PDK.Media</RootNamespace>
-    <AssemblyName>Pelco.PDK.Media</AssemblyName>
+    <RootNamespace>Pelco.Media</RootNamespace>
+    <AssemblyName>Pelco.Media</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />

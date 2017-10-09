@@ -1,4 +1,4 @@
-﻿namespace Pelco.PDK.Media.Common
+﻿namespace Pelco.Media.Common
 {
     public class Credentials
     {

@@ -1,4 +1,4 @@
-﻿namespace Pelco.PDK.Media.RTSP
+﻿namespace Pelco.Media.RTSP
 {
     /// <summary>
     /// RTSP transports types

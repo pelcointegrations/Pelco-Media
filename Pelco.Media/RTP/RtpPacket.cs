@@ -1,8 +1,9 @@
-﻿using Pelco.PDK.Media.Pipeline;
+﻿
+using Pelco.Media.Pipeline;
 using System;
 using System.Collections.Immutable;
 
-namespace Pelco.PDK.Media.RTP
+namespace Pelco.Media.RTP
 {
     /// <summary>
     /// Class representation of an RTP packet as specified in RFC 3550, section 5.1.

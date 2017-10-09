@@ -1,8 +1,8 @@
 ﻿using NLog;
-using Pelco.PDK.Media.RTP;
+using Pelco.Media.RTP;
 using System;
 
-namespace Pelco.PDK.Media.Pipeline.Transforms
+namespace Pelco.Media.Pipeline.Transforms
 {
     public class RtpPayloadTransform : TransformBase
     {

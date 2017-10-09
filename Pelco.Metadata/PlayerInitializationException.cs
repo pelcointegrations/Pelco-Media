@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Pelco.PDK.Metadata
+namespace Pelco.Metadata
 {
     public class PlayerInitializationException : Exception
     {

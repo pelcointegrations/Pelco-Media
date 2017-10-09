@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace Pelco.PDK.Media.RTSP
+namespace Pelco.Media.RTSP
 {
     /// <summary>
     /// Represents the RTSP session header.

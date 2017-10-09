@@ -1,8 +1,6 @@
-﻿using System;
-using System.IO;
-using System.Net;
+﻿using System.Net;
 
-namespace Pelco.PDK.Media.RTSP
+namespace Pelco.Media.RTSP
 {
     /// <summary>
     /// Interfaced for an RTSP connteciton.

@@ -1,4 +1,4 @@
-﻿namespace Pelco.PDK.Media.Pipeline
+﻿namespace Pelco.Media.Pipeline
 {
     /// <summary>
     /// Pipeline interface for pushing data into a pipeline (downstream)

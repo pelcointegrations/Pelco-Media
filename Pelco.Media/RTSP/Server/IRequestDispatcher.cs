@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-
-namespace Pelco.PDK.Media.RTSP.Server
+﻿namespace Pelco.Media.RTSP.Server
 {
     /// <summary>
     /// Dispatches an RTSP Request.

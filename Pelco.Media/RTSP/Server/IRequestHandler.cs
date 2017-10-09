@@ -1,4 +1,4 @@
-﻿namespace Pelco.PDK.Media.RTSP.Server
+﻿namespace Pelco.Media.RTSP.Server
 {
     /// <summary>
     /// Interfaced used to defined a request handler for handling RTSP server requests.

@@ -3,7 +3,7 @@ using System.IO;
 using System.Net;
 using System.Text;
 
-namespace Pelco.PDK.Media.Pipeline
+namespace Pelco.Media.Pipeline
 {
     public class ByteBuffer : IDisposable
     {

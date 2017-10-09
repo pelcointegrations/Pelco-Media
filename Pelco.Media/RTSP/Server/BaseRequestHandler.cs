@@ -1,4 +1,4 @@
-﻿namespace Pelco.PDK.Media.RTSP.Server
+﻿namespace Pelco.Media.RTSP.Server
 {
     /// <summary>
     /// Base <see cref="IRequestHandler"/> for handling RTSP requests.

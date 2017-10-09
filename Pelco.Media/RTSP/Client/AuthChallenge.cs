@@ -1,8 +1,8 @@
-﻿using Pelco.PDK.Media.Common;
-using Pelco.PDK.Media.RTSP.Utils;
+﻿using Pelco.Media.Common;
+using Pelco.Media.RTSP.Utils;
 using System.Collections.Immutable;
 
-namespace Pelco.PDK.Media.RTSP.Client
+namespace Pelco.Media.RTSP.Client
 {
     /// <summary>
     /// Factory class that can be used to generate a <see cref="ChallengeResponse"/> instance.

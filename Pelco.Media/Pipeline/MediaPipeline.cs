@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Immutable;
 
-namespace Pelco.PDK.Media.Pipeline
+namespace Pelco.Media.Pipeline
 {
     public sealed class MediaPipeline
     {

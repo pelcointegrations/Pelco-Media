@@ -1,6 +1,6 @@
-﻿using Pelco.PDK.Media.Pipeline;
+﻿using Pelco.Media.Pipeline;
 
-namespace Pelco.PDK.Metadata
+namespace Pelco.Metadata
 {
     /// <summary>
     /// Used by the <see cref="VxMetadataPlayer"/> to build a metadata processing pipeline.

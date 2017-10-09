@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Pelco.PDK.Media.Pipeline
+namespace Pelco.Media.Pipeline
 {
     class EndOfBufferException : Exception
     {

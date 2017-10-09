@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Pelco.PDK.Media.Pipeline.Transforms
+namespace Pelco.Media.Pipeline.Transforms
 {
     public class SsrcFilter : TransformBase
     {

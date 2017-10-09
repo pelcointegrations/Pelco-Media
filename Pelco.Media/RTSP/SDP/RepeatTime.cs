@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Text;
 
-namespace Pelco.PDK.Media.RTSP.SDP
+namespace Pelco.Media.RTSP.SDP
 {
     public class RepeatTime
     {

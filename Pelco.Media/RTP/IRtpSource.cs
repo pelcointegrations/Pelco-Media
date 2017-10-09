@@ -1,6 +1,6 @@
-﻿using Pelco.PDK.Media.Pipeline;
+﻿using Pelco.Media.Pipeline;
 
-namespace Pelco.PDK.Media.RTP
+namespace Pelco.Media.RTP
 {
     /// <summary>
     /// Defines an RTP source. An RTP source is also paired with RTCP. Definitions

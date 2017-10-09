@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Pelco.PDK.Metadata</RootNamespace>
-    <AssemblyName>Pelco.PDK.Metadata</AssemblyName>
+    <AssemblyName>Pelco.Metadata</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />

@@ -1,6 +1,6 @@
-﻿using Pelco.PDK.Media.Pipeline;
+﻿using Pelco.Media.Pipeline;
 
-namespace Pelco.PDK.Media.RTSP
+namespace Pelco.Media.RTSP
 {
     /// <summary>
     /// Represents an interleaved RTP/RTCP data source for a <see cref="MediaPipeline"/>

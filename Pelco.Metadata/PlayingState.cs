@@ -1,4 +1,4 @@
-﻿namespace Pelco.PDK.Metadata
+﻿namespace Pelco.Metadata
 {
     /// <summary>
     /// Defines the playing state.

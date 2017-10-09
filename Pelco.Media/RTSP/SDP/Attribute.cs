@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Pelco.PDK.Media.RTSP.SDP
+namespace Pelco.Media.RTSP.SDP
 {
     public class Attribute
     {

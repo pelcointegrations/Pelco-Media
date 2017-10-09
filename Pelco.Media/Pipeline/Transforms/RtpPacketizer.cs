@@ -1,8 +1,8 @@
-﻿using Pelco.PDK.Media.RTP;
+﻿using Pelco.Media.RTP;
 using System;
 using System.Collections.Generic;
 
-namespace Pelco.PDK.Media.Pipeline.Transforms
+namespace Pelco.Media.Pipeline.Transforms
 {
     public class RtpPacketizer : TransformBase
     {

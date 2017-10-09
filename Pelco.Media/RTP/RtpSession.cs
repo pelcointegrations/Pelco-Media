@@ -1,11 +1,11 @@
 ﻿using NLog;
-using Pelco.PDK.Media.Pipeline;
-using Pelco.PDK.Media.RTSP;
-using Pelco.PDK.Media.RTSP.Client;
+using Pelco.Media.Pipeline;
+using Pelco.Media.RTSP;
+using Pelco.Media.RTSP.Client;
 using System;
 using System.Collections.Generic;
 
-namespace Pelco.PDK.Media.RTP
+namespace Pelco.Media.RTP
 {
     public class RtpSession : IDisposable
     {

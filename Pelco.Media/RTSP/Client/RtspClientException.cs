@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Pelco.PDK.Media.RTSP.Client
+namespace Pelco.Media.RTSP.Client
 {
     public class RtspClientException : RtspException
     {

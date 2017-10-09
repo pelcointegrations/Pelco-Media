@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Pelco.PDK.Media.RTSP.Server
+namespace Pelco.Media.RTSP.Server
 {
     public class DefaultRequestDispatcher : IRequestDispatcher
     {

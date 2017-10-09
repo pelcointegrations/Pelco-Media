@@ -7,7 +7,7 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Pelco.PDK.Media.RTSP.Server
+namespace Pelco.Media.RTSP.Server
 {
     public class RtspServer
     {

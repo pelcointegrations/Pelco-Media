@@ -1,4 +1,4 @@
-﻿namespace Pelco.PDK.Media.RTP
+﻿namespace Pelco.Media.RTP
 {
     public class RtpVersion
     {

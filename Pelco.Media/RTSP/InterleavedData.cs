@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Pelco.PDK.Media.RTSP
+namespace Pelco.Media.RTSP
 {
     /// <summary>
     /// Represents an interleaved RTP/RTCP packet.  Users can retrieve the packet's data as well

@@ -1,8 +1,8 @@
 ﻿
-using Pelco.PDK.Media.Common;
+using Pelco.Media.Common;
 using System;
 
-namespace Pelco.PDK.Metadata
+namespace Pelco.Metadata
 {
     /// <summary>
     /// Configuration used to initialize a <see cref="VxMetadataPlayer"/>

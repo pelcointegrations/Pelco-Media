@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Pelco.Media.Common;
+using System;
 using System.Text;
-using Pelco.PDK.Media.Common;
 
-namespace Pelco.PDK.Media.RTSP.Client
+namespace Pelco.Media.RTSP.Client
 {
     /// <summary>
     /// A <see cref="ChallengeResponse"/> of type Basic.  This class will generate an

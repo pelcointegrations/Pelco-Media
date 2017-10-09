@@ -1,13 +1,12 @@
 ﻿using NLog;
-using Pelco.PDK.Media.Pipeline;
+using Pelco.Media.Pipeline;
 using System;
 using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
-using System.Text;
 
-namespace Pelco.PDK.Media.RTP
+namespace Pelco.Media.RTP
 {
     public class RtpUdpSource : IRtpSource
     {
