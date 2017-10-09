@@ -37,8 +37,20 @@ namespace Pelco.Media.Pipeline.Transforms
                     PayloadType = _payloadType,
                     SequenceNumber = ++_seqNum,
                     SSRC = _ssrc,
-                    Marker = i == (slices.Count - 1)
+                    Marker = i == (slices.Count - 1),
                 };
+
+                if (buffer.TimeReference != null)
+                {
+                    var onvifHeader = new OnvifRtpHeader()
+                    {
+                        CbitSet = true,
+                        Time = buffer.TimeReference
+                    };
+
+                    packet.ExtensionHeaderData = OnvifRtpHeader.PROFILE_ID;
+                    packet.ExtensionData = onvifHeader.Encode();
+                }
 
                 PushBuffer(RtpPacket.Encode(packet, 0));
             }
