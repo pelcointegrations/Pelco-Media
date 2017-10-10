@@ -14,12 +14,14 @@ namespace Pelco.Media.Tests.Common
 
             Assert.Equal(3717225197, ntpTime.Seconds);
             Assert.Equal((uint)137438953, ntpTime.Fraction);
+            Assert.Equal(date, ntpTime.UtcDate.ToLocalTime());
 
             date = new DateTime(2012, 8, 2, 8, 52, 1, 43);
             ntpTime = new NtpTime(date);
 
             Assert.Equal(3552907921, ntpTime.Seconds);
             Assert.Equal((uint)184683593, ntpTime.Fraction);
+            Assert.Equal(date, ntpTime.UtcDate.ToLocalTime());
         }
     }
 }

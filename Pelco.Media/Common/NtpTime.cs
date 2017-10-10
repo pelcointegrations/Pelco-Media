@@ -30,6 +30,36 @@ namespace Pelco.Media.Common
             _ntpTime = ToNtpTime(GetMillisecondsFromJan011970(dt));
         }
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="ntpTime">The ntp timestamp</param>
+        public NtpTime(long ntpTime)
+        {
+            _ntpTime = ntpTime;
+        }
+
+        /// <summary>
+        /// Convert 64-bit NTP timestamp to a <see cref="DateTime"/>
+        ///
+        /// Note that java time(milliseconds) by definition has less precision
+        /// then NTP time(picoseconds) so converting NTP timestamp to c# time and back
+        /// to NTP timestamp loses precision. For example, Tue, Dec 17 2002 09:07:24.810 EST
+        /// is represented by a single C# time value of f22cd1fc8a, but its
+        /// NTP equivalent are all values ranging from c1a9ae1c.cf5c28f5 to c1a9ae1c.cf9db22c.
+        /// </summary>
+        public DateTime UtcDate
+        {
+            get
+            {
+                var offset = DateTimeOffset.FromUnixTimeMilliseconds(GetTime());
+                return offset.UtcDateTime;
+            }
+        }
+
+        /// <summary>
+        /// Returns high-order 32-bits representing the seconds of this NTP timestamp.
+        /// </summary>
         public uint Seconds
         {
             get
@@ -38,6 +68,9 @@ namespace Pelco.Media.Common
             }
         }
 
+        /// <summary>
+        /// Returns low-order 32-bits representing the fractional seconds.
+        /// </summary>
         public uint Fraction
         {
             get
@@ -65,6 +98,35 @@ namespace Pelco.Media.Common
             long ntpTime = seconds << 32 | fraction;
 
             return ntpTime;
+        }
+
+        private long GetTime()
+        {
+            long seconds = Seconds;
+            long fraction = Fraction;
+
+            double fpart = 1000D * fraction / 0x100000000;
+            // Use round-off on fractional part to preserve going to lower precision
+            fraction = (long)Math.Round(fpart);
+
+            /*
+             * If the most significant bit (MSB) on the seconds field is set we use
+             * a different time base. The following text is a quote from RFC-2030 (SNTP v4):
+             *
+             *  If bit 0 is set, the UTC time is in the range 1968-2036 and UTC time
+             *  is reckoned from 0h 0m 0s UTC on 1 January 1900. If bit 0 is not set,
+             *  the time is in the range 2036-2104 and UTC time is reckoned from
+             *  6h 28m 16s UTC on 7 February 2036.
+             */
+            long msb = seconds & 0x80000000;
+            if (msb == 0)
+            {
+                return baseTime0 + (seconds * 1000) + fraction;
+            }
+            else
+            {
+                return baseTime1 + (seconds * 1000) + fraction;
+            }
         }
     }
 }

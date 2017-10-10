@@ -1,10 +1,6 @@
 ﻿using Pelco.Media.Common;
 using Pelco.Media.Pipeline;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Pelco.Media.RTP
 {
@@ -27,7 +23,23 @@ namespace Pelco.Media.RTP
 
         public byte CSeq { get; set; }
 
-        public  ByteBuffer Encode()
+        public static OnvifRtpHeader Decode(ByteBuffer buffer)
+        {
+            var ntpTime = new NtpTime(buffer.ReadInt64AsHost());
+            byte b = buffer.ReadByte();
+
+            return new OnvifRtpHeader()
+            {
+                Time = ntpTime.UtcDate,
+                CbitSet = (b & C_BIT_FLAG_MASK) != 0,
+                DbitSet = (b & D_BIT_FLAG_MASK) != 0,
+                EbitSet = (b & E_BIT_FLAG_MASK) != 0,
+                CSeq = buffer.ReadByte()
+            };
+
+        }
+
+        public ByteBuffer Encode()
         {
             var buffer = new ByteBuffer(PACKET_SIZE_IN_BYTES);
 
@@ -55,6 +67,8 @@ namespace Pelco.Media.RTP
             buffer.WriteByte(b);
             buffer.WriteByte(CSeq);
             buffer.WriteInt16(0);
+            buffer.SetPosition(0, ByteBuffer.PositionOrigin.BEGINNING); // Re-set so that we can read from the list
+            buffer.MarkReadOnly();
 
             return buffer;
         }

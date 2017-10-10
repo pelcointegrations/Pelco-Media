@@ -7,6 +7,15 @@ namespace Pelco.Media.Pipeline
 {
     public class ByteBuffer : IDisposable
     {
+        /// <summary>
+        /// Enum that defines the buffer position origin when setting the buffer's reader/writer position.
+        /// </summary>
+        public enum PositionOrigin
+        {
+            BEGINNING,
+            END
+        };
+
         private static readonly Int32 MAX_BUFFER_LENGTH = Int32.MaxValue;
 
         private byte[] _buffer;
@@ -36,7 +45,7 @@ namespace Pelco.Media.Pipeline
             _position = 0;
             _startIndex = 0;
             _isOpen = true;
-            _readOnly = true;
+            _readOnly = false;
             _isExpandable = true;
         }
 
@@ -205,6 +214,31 @@ namespace Pelco.Media.Pipeline
             return encoding.GetString(_buffer, _startIndex, _length - _startIndex);
         }
 
+        public void SetPosition(int offset, PositionOrigin origin)
+        {
+            if (origin == PositionOrigin.BEGINNING)
+            {
+                if ((offset < 0) || ((_startIndex + offset) > (_length - 1)))
+                {
+                    throw new IndexOutOfRangeException("Offset must be positive and within the bounds of the buffer");
+                }
+
+                _position = _startIndex + offset;
+            }
+            else
+            {
+                // The position origin is the end of the buffer.
+
+                int lastIdx = (_startIndex + _length) - 1;
+                if (offset > 0 || (offset + lastIdx) < _startIndex)
+                {
+                    throw new IndexOutOfRangeException("Offset must be a negative integer and within the bouds of the buffer");
+                }
+
+                _position = offset + lastIdx;
+            }
+        }
+
         /// <summary>
         /// Returns a writeable copy of the buffer.  If the buffer is already
         /// writeable then the exiting buffer is returned without copying data.
@@ -230,7 +264,7 @@ namespace Pelco.Media.Pipeline
         public ByteBuffer Copy(bool preservePosition = false)
         {
             var copy = new byte[_length];
-            System.Buffer.BlockCopy(_buffer, _startIndex, copy, 0, _length);
+            Buffer.BlockCopy(_buffer, _startIndex, copy, 0, _length);
 
             var buffer = new ByteBuffer(copy);
 
@@ -487,7 +521,9 @@ namespace Pelco.Media.Pipeline
 
         public void WriteUInt16NetworkOrder(UInt16 value)
         {
-            var bytes = BitConverter.GetBytes((UInt16)IPAddress.HostToNetworkOrder(value));
+            var bytes = BitConverter.GetBytes(value);
+
+            ReverseByteOrder(bytes);
             Write(bytes, 0, bytes.Length);
         }
 
@@ -499,7 +535,8 @@ namespace Pelco.Media.Pipeline
 
         public void WriteInt32NetworkOrder(Int32 value)
         {
-            var bytes = BitConverter.GetBytes(IPAddress.HostToNetworkOrder(value));
+            var bytes = BitConverter.GetBytes(value);
+            ReverseByteOrder(bytes);
             Write(bytes, 0, bytes.Length);
         }
 
@@ -511,7 +548,35 @@ namespace Pelco.Media.Pipeline
 
         public void WriteUint32NetworkOrder(UInt32 value)
         {
-            var byets = BitConverter.GetBytes((UInt32)IPAddress.HostToNetworkOrder(value));
+            var bytes = BitConverter.GetBytes(value);
+            ReverseByteOrder(bytes);
+            Write(bytes, 0, bytes.Length);
+        }
+
+        public void WriteInt64(Int64 value)
+        {
+            var bytes = BitConverter.GetBytes(value);
+            Write(bytes, 0, bytes.Length);
+        }
+
+        public void WriteInt64NetworkOrder(Int64 value)
+        {
+            var bytes = BitConverter.GetBytes(value);
+            ReverseByteOrder(bytes);
+            Write(bytes, 0, bytes.Length);
+        }
+
+        public void WriteUInt64(UInt64 value)
+        {
+            var bytes = BitConverter.GetBytes(value);
+            Write(bytes, 0, bytes.Length);
+        }
+
+        public void WriteUInt64NetworkOrder(UInt64 value)
+        {
+            var bytes = BitConverter.GetBytes(value);
+            ReverseByteOrder(bytes);
+            Write(bytes, 0, bytes.Length);
         }
 
         public void WriteByte(byte value)
@@ -537,7 +602,8 @@ namespace Pelco.Media.Pipeline
                 _length = newPosition;
             }
 
-            _buffer[++_position] = value;
+            _buffer[_position] = value;
+            _position = newPosition;
         }
 
         /// <summary>
@@ -659,6 +725,14 @@ namespace Pelco.Media.Pipeline
                 newCapacity = (newCapacity < 0) ? MAX_BUFFER_LENGTH : newCapacity;
 
                 Capacity = newCapacity;
+            }
+        }
+
+        private void ReverseByteOrder(byte[] array)
+        {
+            if (BitConverter.IsLittleEndian)
+            {
+                Array.Reverse(array);
             }
         }
     }

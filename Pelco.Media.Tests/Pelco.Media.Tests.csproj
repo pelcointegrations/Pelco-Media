@@ -60,6 +60,7 @@
     <Compile Include="Integrations\RtspClientServerTests.cs" />
     <Compile Include="Integrations\RtspCommunicationFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RTP\OnvifRtpHeaderTests.cs" />
     <Compile Include="Utils\NetworkUtil.cs" />
     <Compile Include="Utils\TestRequestHandler.cs" />
   </ItemGroup>
