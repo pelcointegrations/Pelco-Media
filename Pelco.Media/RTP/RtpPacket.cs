@@ -44,27 +44,27 @@ namespace Pelco.Media.RTP
 
         #region Properties
 
-        public RtpVersion Version { get; internal set; }
+        public RtpVersion Version { get; set; }
 
-        public byte PayloadType { get; internal set; }
+        public byte PayloadType { get; set; }
 
-        public bool HasExtensionHeader { get; internal set; }
+        public bool HasExtensionHeader { get; set; }
 
-        public ushort ExtensionHeaderData { get; internal set; }
+        public ushort ExtensionHeaderData { get; set; }
 
-        public bool Marker { get; internal set; }
+        public bool Marker { get; set; }
 
-        public ushort SequenceNumber { get; internal set; }
+        public ushort SequenceNumber { get; set; }
 
-        public uint SSRC { get; internal set; }
+        public uint SSRC { get; set; }
 
-        public uint Timestamp { get; internal set; }
+        public uint Timestamp { get; set; }
 
-        public ImmutableList<uint> CsrcIds { get; internal set; }
+        public ImmutableList<uint> CsrcIds { get; set; }
 
-        public ByteBuffer ExtensionData { get; internal set; }
+        public ByteBuffer ExtensionData { get; set; }
 
-        public ByteBuffer Payload { get; internal set; }
+        public ByteBuffer Payload { get; set; }
 
         #endregion
 
@@ -118,17 +118,17 @@ namespace Pelco.Media.RTP
             return packet;
         }
 
-        public static ByteBuffer Encode(RtpPacket packet, int fixedBlockSize)
+        public ByteBuffer Encode(int fixedBlockSize = 0)
         {
             int packetSize = MIN_RTP_PACKET_SIZE;
 
-            if (packet.HasExtensionHeader)
+            if (HasExtensionHeader)
             {
-                packetSize += (BYTES_IN_WORD + packet.ExtensionData.Length);
+                packetSize += (BYTES_IN_WORD + ExtensionData.Length);
             }
 
-            packetSize += packet.CsrcIds.Count * BYTES_IN_WORD;
-            packetSize += packet.Payload.Length;
+            packetSize += CsrcIds.Count * BYTES_IN_WORD;
+            packetSize += Payload.Length;
 
             int paddingSize = 0;
             if (fixedBlockSize > 0)
@@ -149,7 +149,7 @@ namespace Pelco.Media.RTP
 
             byte b = 0x00;
 
-            switch (packet.Version.Value())
+            switch (Version.Value())
             {
                 case 1:
                     b |= 0x40;
@@ -170,44 +170,46 @@ namespace Pelco.Media.RTP
                 b |= 0x20;
             }
 
-            if (packet.HasExtensionHeader)
+            if (HasExtensionHeader)
             {
                 b |= 0x10;
             }
 
-            b |= (byte)packet.CsrcIds.Count;
+            b |= (byte)CsrcIds.Count;
 
             buffer.WriteByte(b);
 
             b = 0x00;
-            if (packet.Marker)
+            if (Marker)
             {
                 b |= 0x80;
             }
 
-            b |= packet.PayloadType;
+            b |= PayloadType;
             buffer.WriteByte(b);
 
-            buffer.WriteUInt16NetworkOrder(packet.SequenceNumber);
-            buffer.WriteUint32NetworkOrder(packet.Timestamp);
-            buffer.WriteUint32NetworkOrder(packet.SSRC);
+            buffer.WriteUInt16NetworkOrder(SequenceNumber);
+            buffer.WriteUint32NetworkOrder(Timestamp);
+            buffer.WriteUint32NetworkOrder(SSRC);
 
-            if (!packet.CsrcIds.IsEmpty)
+            if (!CsrcIds.IsEmpty)
             {
-                foreach (var csrc in packet.CsrcIds)
+                foreach (var csrc in CsrcIds)
                 {
                     buffer.WriteUint32NetworkOrder(csrc);
                 }
             }
 
-            if (packet.HasExtensionHeader)
+            if (HasExtensionHeader)
             {
-                buffer.WriteUInt16NetworkOrder(packet.ExtensionHeaderData);
-                buffer.WriteUInt16NetworkOrder((UInt16)(packet.ExtensionData.Length / BYTES_IN_WORD));
-                buffer.Write(packet.ExtensionData);
+                buffer.WriteUInt16NetworkOrder(ExtensionHeaderData);
+                buffer.WriteUInt16NetworkOrder((UInt16)(ExtensionData.Length / BYTES_IN_WORD));
+                buffer.Write(ExtensionData);
             }
 
-            buffer.Write(packet.Payload);
+            buffer.Write(Payload);
+            buffer.MarkReadOnly();
+            buffer.SetPosition(0, ByteBuffer.PositionOrigin.BEGINNING);
 
             return buffer;
         }

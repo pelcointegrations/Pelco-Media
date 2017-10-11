@@ -52,7 +52,7 @@ namespace Pelco.Media.Pipeline.Transforms
                     packet.ExtensionData = onvifHeader.Encode();
                 }
 
-                PushBuffer(RtpPacket.Encode(packet, 0));
+                PushBuffer(packet.Encode());
             }
 
             return true;

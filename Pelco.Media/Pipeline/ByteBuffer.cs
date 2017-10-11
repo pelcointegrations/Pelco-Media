@@ -454,7 +454,7 @@ namespace Pelco.Media.Pipeline
                 throw new ArgumentNullException("Cannot write to Buffer provided buffer is null");
             }
 
-            Write(buffer._buffer, buffer._startIndex, buffer._length);
+            Write(buffer._buffer, buffer._startIndex, buffer.Length);
         }
 
         public void Write(byte[] buffer, Int32 offset, Int32 count)
@@ -626,9 +626,11 @@ namespace Pelco.Media.Pipeline
         public ByteBuffer ReadSlice(Int32 count)
         {
             EnsureCanRead(count);
-            _position += count;
 
-            return new ByteBuffer(_buffer, _position, count, isReadonly: true);
+            var buf = new ByteBuffer(_buffer, _position, count, isReadonly: true);
+
+            _position += count;
+            return buf;
         }
 
         /// <summary>
