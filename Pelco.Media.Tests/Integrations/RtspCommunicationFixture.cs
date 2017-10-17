@@ -18,7 +18,7 @@ namespace Pelco.Media.Tests.Integrations
             ServerPort = NetworkUnil.FindAvailableTcpPort();
 
             var dispatcher = new DefaultRequestDispatcher();
-            dispatcher.RegisterListener(URI_PATH, new TestRequestHandler());
+            dispatcher.RegisterHandler(URI_PATH, new TestRequestHandler());
 
             _server = new RtspServer(ServerPort, dispatcher);
             _server.Start();

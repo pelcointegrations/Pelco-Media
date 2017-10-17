@@ -1,14 +1,57 @@
-﻿using System.Collections.Generic;
+﻿using NLog;
+using System;
+using System.Collections.Generic;
 
 namespace Pelco.Media.RTSP.Server
 {
     public class DefaultRequestDispatcher : IRequestDispatcher
     {
+        private static readonly Logger LOG = LogManager.GetCurrentClassLogger();
+
         private Dictionary<string, IRequestHandler> _handlers;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public DefaultRequestDispatcher()
         {
             _handlers = new Dictionary<string, IRequestHandler>();
+        }
+
+        /// <summary>
+        /// <see cref="IRequestDispatcher.Init"/>
+        /// </summary>
+        public virtual void Init()
+        {
+            foreach (var handler in _handlers)
+            {
+                try
+                {
+                    handler.Value.Init();
+                }
+                catch (Exception e)
+                {
+                    LOG.Error(e, $"Causght exception while initalizing '{handler.GetType().Name}'");
+                }
+            }
+        }
+
+        /// <summary>
+        /// <see cref="IRequestDispatcher.Close"/>
+        /// </summary>
+        public virtual void Close()
+        {
+            foreach (var handler in _handlers)
+            {
+                try
+                {
+                    handler.Value.Close();
+                }
+                catch (Exception e)
+                {
+                    LOG.Error(e, $"Causght exception while closing '{handler.GetType().Name}'");
+                }
+            }
         }
 
         /// <summary>
@@ -17,7 +60,7 @@ namespace Pelco.Media.RTSP.Server
         /// </summary>
         /// <param name="path">The path used to look up the handler</param>
         /// <param name="handler">The handler used to process the RTSP request</param>
-        public void RegisterListener(string path, IRequestHandler handler)
+        public void RegisterHandler(string path, IRequestHandler handler)
         {
             if (!_handlers.ContainsKey(path))
             {

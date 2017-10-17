@@ -14,6 +14,20 @@
         public abstract RtspResponse SetUp(RtspRequest request);
 
         public abstract RtspResponse TearDown(RtspRequest request);
+        
+        /// <summary>
+        /// <see cref="IRequestHandler.Init"/>
+        /// </summary>
+        public virtual void Init()
+        {
+        }
+        
+        /// <summary>
+        /// <see cref="IRequestHandler.Close"/>
+        /// </summary>
+        public virtual void Close()
+        {
+        }
 
         public RtspResponse Options(RtspRequest request)
         {

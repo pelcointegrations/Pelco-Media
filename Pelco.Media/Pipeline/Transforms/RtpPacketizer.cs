@@ -1,4 +1,5 @@
-﻿using Pelco.Media.RTP;
+﻿using NLog;
+using Pelco.Media.RTP;
 using System;
 using System.Collections.Generic;
 
@@ -6,6 +7,8 @@ namespace Pelco.Media.Pipeline.Transforms
 {
     public class RtpPacketizer : TransformBase
     {
+        private static readonly Logger LOG = LogManager.GetCurrentClassLogger();
+
         private const int DEFAULT_MTU = 1400;
 
         private int _mtu;
@@ -48,6 +51,7 @@ namespace Pelco.Media.Pipeline.Transforms
                         Time = buffer.TimeReference
                     };
 
+                    packet.HasExtensionHeader = true;
                     packet.ExtensionHeaderData = OnvifRtpHeader.PROFILE_ID;
                     packet.ExtensionData = onvifHeader.Encode();
                 }

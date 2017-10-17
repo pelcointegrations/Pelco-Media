@@ -5,6 +5,16 @@
     /// </summary>
     public interface IRequestHandler
     {
+        /// <summary>
+        /// Allows extensions to initialize resources if requried.
+        /// </summary>
+        void Init();
+
+        /// <summary>
+        /// Allows extensions to closed created resources if required.
+        /// </summary>
+        void Close();
+
         RtspResponse Announce(RtspRequest request);
 
         RtspResponse Describe(RtspRequest request);

@@ -41,6 +41,7 @@ namespace Pelco.Media.RTSP.Server
                     _messages = new BlockingCollection<RtspMessage>();
 
                     _listener.Start();
+                    _dispatcher.Init();
                     LOG.Info($"Started RTSP server on '{_port}'");
 
                     ThreadPool.QueueUserWorkItem(Accept);
@@ -57,6 +58,7 @@ namespace Pelco.Media.RTSP.Server
                 {
                     _stop.Set();
                     _listener.Stop();
+                    _dispatcher.Close();
                     _messages.Dispose();
                     _listener = null;
 
@@ -146,6 +148,11 @@ namespace Pelco.Media.RTSP.Server
 
                         if (response != null)
                         {
+                            if (response.HasBody)
+                            {
+                                response.Headers[RtspHeaders.Names.CONTENT_LENGTH] = response.Body.Length.ToString();
+                            }
+
                             response.Headers[RtspHeaders.Names.CSEQ] = receivedCseq.ToString();
                             listener.SendResponse(response);
                         }

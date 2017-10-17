@@ -53,11 +53,7 @@ namespace Pelco.Media.Pipeline.Sinks
 
             try
             {
-                var e = new SocketAsyncEventArgs();
-                e.RemoteEndPoint = _target;
-                e.SetBuffer(buffer.Raw, buffer.StartIndex, buffer.Length);
-
-                _socket.SendAsync(e);
+                _socket.SendTo(buffer.Raw, buffer.StartIndex, buffer.Length, SocketFlags.None, _target);
             }
             catch (ObjectDisposedException)
             {
