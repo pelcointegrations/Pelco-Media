@@ -33,7 +33,7 @@
         {
             return RtspResponse.CreateBuilder()
                                .Status(RtspResponse.Status.Ok)
-                               .AddHeader(RtspHeaders.Names.PUBLIC, "OPTIONS, DESCRIBE, GET_PARAMATER, SETUP, PLAY, TEARDOWN")
+                               .AddHeader(RtspHeaders.Names.PUBLIC, "OPTIONS, DESCRIBE, GET_PARAMETER, SETUP, PLAY, TEARDOWN")
                                .Build();
         }
 

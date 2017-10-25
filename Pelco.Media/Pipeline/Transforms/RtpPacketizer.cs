@@ -35,7 +35,7 @@ namespace Pelco.Media.Pipeline.Transforms
                 var slice = slices[i];
                 var packet = new RtpPacket()
                 {
-                    Version = RtpVersion.V1,
+                    Version = RtpVersion.V2,
                     Payload = slice,
                     PayloadType = _payloadType,
                     SequenceNumber = ++_seqNum,

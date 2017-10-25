@@ -36,12 +36,13 @@
             }
         }
 
-        virtual public void Start()
+        public virtual void Start()
         {
         }
 
-        virtual public void Stop()
+        public virtual void Stop()
         {
+            
         }
 
         protected virtual bool PushObject(T obj)
