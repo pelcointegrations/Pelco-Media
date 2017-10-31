@@ -42,6 +42,7 @@
     </Reference>
     <Reference Include="System.Core" />
     <Reference Include="System.Windows" />
+    <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -54,9 +55,14 @@
     <Compile Include="IPipelineCreator.cs" />
     <Compile Include="UI\OverlayDrawingCanvas.cs" />
     <Compile Include="UI\Overlays\EllipseOverlay.cs" />
+    <Compile Include="UI\Overlays\IPointTranslator.cs" />
     <Compile Include="UI\Overlays\LineOverlay.cs" />
     <Compile Include="UI\Overlays\OverlayDrawing.cs" />
     <Compile Include="UI\Overlays\RectangleOverlay.cs" />
+    <Compile Include="UI\VideoOverlayCanvas.xaml.cs">
+      <DependentUpon>VideoOverlayCanvas.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\VideoOverlayCanvasBase.cs" />
     <Compile Include="VxMetadataPlayer.cs" />
     <Compile Include="PlayerConfiguration.cs" />
     <Compile Include="PlayingState.cs" />
@@ -66,12 +72,19 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <Compile Include="UI\IVideoOverlayCanvas.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Pelco.Media\Pelco.Media.csproj">
       <Project>{d2dbcfad-a3e6-4850-a3fd-9160c150fa22}</Project>
       <Name>Pelco.Media</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="UI\VideoOverlayCanvas.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

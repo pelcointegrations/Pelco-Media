@@ -1,4 +1,5 @@
 ﻿using NLog;
+using Pelco.Metadata.UI.Overlays;
 using Pelco.PDK.Metadata.UI.Overlays;
 using System;
 using System.Collections.Generic;
@@ -6,12 +7,12 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 
-namespace Pelco.PDK.Metadata.UI
+namespace Pelco.Metadata.UI
 {
     /// <summary>
     /// Surface on which drawings can be created on top of the chroma key.
     /// </summary>
-    public class OverlayDrawingCanvas : FrameworkElement
+    public class OverlayDrawingCanvas : FrameworkElement, IPointTranslator
     {
         private static readonly Logger LOG = LogManager.GetCurrentClassLogger();
 
@@ -28,20 +29,37 @@ namespace Pelco.PDK.Metadata.UI
         /// </summary>
         public OverlayDrawingCanvas()
         {
-            _drawings = new Dictionary<string, DrawingContainer>();
-            _children = new VisualCollection(this);
             _videoRotation = 0.0;
             _streamAspectRatio = 1920.0 / 1080.0;
             _normalizedWindow = new Rect(0.0, 0.0, 1.0, 1.0);
             _normalizedDPtzWindow = new Rect(0.0, 0.0, 1.0, 1.0);
             _normalizedDerivedWindow = new Rect(0.0, 0.0, 1.0, 1.0);
+            _drawings = new Dictionary<string, DrawingContainer>();
+            _children = new VisualCollection(this);
 
             ClipToBounds = true;
-
-            SizeChanged += OnSizeChanged;
         }
 
         protected override int VisualChildrenCount => _children.Count;
+
+        public void OnOverlayDigitalPtzChange(Rect normalizedPtzWindow)
+        {
+            _normalizedDPtzWindow = normalizedPtzWindow;
+            OnOverlayCanvasSizeChange();
+        }
+
+        public void OnOverlayStreamAspectRatioChange(double aspectRatio)
+        {
+            _streamAspectRatio = aspectRatio;
+            OnOverlayCanvasSizeChange();
+        }
+
+        public void OnOverlayWindowChange(Rect normalizedVideoWindow, double rotation)
+        {
+            _normalizedWindow = normalizedVideoWindow;
+            _videoRotation = rotation;
+            OnOverlayCanvasSizeChange();
+        }
 
         /// <summary>
         /// Remove the drawing.
@@ -94,7 +112,7 @@ namespace Pelco.PDK.Metadata.UI
                 DrawingVisual drawingVisual = new DrawingVisual();
                 using (var context = drawingVisual.RenderOpen())
                 {
-                    drawing.Draw(context, new Size(ActualWidth, ActualHeight));
+                    drawing.Draw(context, this);
                 }
 
                 _drawings.Add(drawing.ID, new DrawingContainer(drawing, drawingVisual));
@@ -116,12 +134,80 @@ namespace Pelco.PDK.Metadata.UI
             return _children[index];
         }
 
-        private void OnSizeChanged(object sender, SizeChangedEventArgs sizeChangedEventArgs)
+        public void Redraw()
         {
             _children.Clear();
             foreach (var drawing in _drawings.Values)
             {
                 Draw(drawing.OverlayDrawing);
+            }
+        }
+
+        private void OnOverlayCanvasSizeChange()
+        {
+            ComputeNormalizedDerivedWindow();
+
+            double vidX0 = this.ActualWidth * _normalizedDerivedWindow.TopLeft.X;
+            double vidY0 = this.ActualHeight * _normalizedDerivedWindow.TopLeft.Y;
+            double vidX1 = this.ActualWidth * _normalizedDerivedWindow.BottomRight.X;
+            double vidY1 = this.ActualHeight * _normalizedDerivedWindow.BottomRight.Y;
+
+            Clip = new RectangleGeometry(new Rect()
+            {
+                X = Math.Min(vidX0, vidX1),
+                Y = Math.Min(vidY0, vidY1),
+                Width = Math.Abs(vidX1 - vidX0),
+                Height = Math.Abs(vidY1 - vidY0),
+            });
+
+            Redraw(); // Redraw the shapes so that if thigs change we re-draw correctly.
+        }
+
+        private void ComputeNormalizedDerivedWindow()
+        {
+            // This is probably obsolete.  I think we are always providing the _normalizedVideoWindow now.
+
+            if ((_normalizedWindow.Width == 0.0) || (_normalizedWindow.Height == 0.0))
+            {
+                // We didn't get any video window information so assume the video window is centered and aspect ratio is the
+                // same as the stream (ie:dptz didn't change it)
+
+                if ((this.ActualHeight != 0.0) &&
+                    (this.ActualWidth != 0.0) &&
+                    (_streamAspectRatio != 0.0))
+                {
+
+                    double aspectCanvas = this.ActualWidth / this.ActualHeight;
+
+                    if (aspectCanvas > _streamAspectRatio)
+                    {
+                        // Full Height, cropped width
+                        _normalizedDerivedWindow.Height = 1.0;
+                        _normalizedDerivedWindow.Width = _normalizedDerivedWindow.Height * _streamAspectRatio / aspectCanvas;
+                    }
+                    else
+                    {
+                        // Full Width, cropped height
+                        _normalizedDerivedWindow.Width = 1.0;
+                        _normalizedDerivedWindow.Height = aspectCanvas * _normalizedDerivedWindow.Width / _streamAspectRatio;
+                    }
+
+                    // Center the image
+                    _normalizedDerivedWindow.X = (1.0 - _normalizedDerivedWindow.Width) / 2.0;
+                    _normalizedDerivedWindow.Y = (1.0 - _normalizedDerivedWindow.Height) / 2.0;
+                }
+                else
+                {
+                    // Probably should just throw an exception but for now we will just zero everything;
+                    _normalizedDerivedWindow.X = 0.0;
+                    _normalizedDerivedWindow.Y = 0.0;
+                    _normalizedDerivedWindow.Width = 0.0;
+                    _normalizedDerivedWindow.Height = 0.0;
+                }
+            }
+            else
+            {
+                _normalizedDerivedWindow = _normalizedWindow;
             }
         }
 
@@ -145,7 +231,7 @@ namespace Pelco.PDK.Metadata.UI
             canvas.RenderTransform = transform;
         }
 
-        private Point ComputeCanvasPoint(Point normalizedStreamPoint)
+        public Point TranslatePoint(Point normalizedStreamPoint)
         {
             Point retval = new Point();
 
@@ -173,7 +259,7 @@ namespace Pelco.PDK.Metadata.UI
 
 
             // compute the Video view window points in canvas space
-            double vidX0 = this.ActualWidth *  _normalizedDerivedWindow.TopLeft.X;
+            double vidX0 = this.ActualWidth * _normalizedDerivedWindow.TopLeft.X;
             double vidY0 = this.ActualHeight * _normalizedDerivedWindow.TopLeft.Y;
             double vidX1 = this.ActualWidth * _normalizedDerivedWindow.BottomRight.X;
             double vidY1 = this.ActualHeight * _normalizedDerivedWindow.BottomRight.Y;
@@ -217,7 +303,7 @@ namespace Pelco.PDK.Metadata.UI
             return retval;
         }
 
-        private bool CanvasPointInBounds(Point canvasPoint)
+        public bool IsPointInBounds(Point canvasPoint)
         {
             bool retval = false;
 

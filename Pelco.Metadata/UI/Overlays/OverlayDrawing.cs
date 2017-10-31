@@ -1,9 +1,8 @@
-﻿using System;
-using System.Windows;
+﻿using Pelco.PDK.Metadata.UI.Overlays;
+using System;
 using System.Windows.Media;
-using System.Windows.Shapes;
 
-namespace Pelco.PDK.Metadata.UI.Overlays
+namespace Pelco.Metadata.UI.Overlays
 {
     /// <summary>
     /// Base class for all overlay drawings.
@@ -15,9 +14,9 @@ namespace Pelco.PDK.Metadata.UI.Overlays
         /// <summary>
         /// Constructor
         /// </summary>
-        protected OverlayDrawing(string id)
+        protected OverlayDrawing()
         {
-            ID = id;
+            ID = Guid.NewGuid().ToString();
         }
 
         /// <summary>
@@ -26,17 +25,11 @@ namespace Pelco.PDK.Metadata.UI.Overlays
         public string ID { get; }
 
         /// <summary>
-        /// Create a <c>Shape</c> from the overlay drawing.
-        /// </summary>
-        /// <returns>The corresponding <c>Shape</c>.</returns>
-        public abstract Shape ToShape(Size viewSize);
-
-        /// <summary>
         /// Draw the shapen into the context.
         /// </summary>
         /// <param name="context">Context in which to draw.</param>
-        /// <param name="viewSize">Size of the view.</param>
-        public abstract void Draw(DrawingContext context, Size viewSize);
+        /// <param name="translator">Point Translator used to translate the normalized point to the actual point</param>
+        public abstract void Draw(DrawingContext context, IPointTranslator translator);
 
         /// <summary>
         /// Returns true if the overlay id's are equal, false otherwise
@@ -65,22 +58,6 @@ namespace Pelco.PDK.Metadata.UI.Overlays
         public override string ToString()
         {
             return $"ID={ID}, Type={GetType().Name}";
-        }
-
-        protected Point Translate(Size viewSize, Point point)
-        {
-            return new Point(TranslateX(viewSize, point.X),
-                             TranslateY(viewSize, point.Y));
-        }
-
-        protected int TranslateX(Size viewSize, double xNorm)
-        {
-            return (int)(viewSize.Width * xNorm);
-        }
-
-        protected int TranslateY(Size viewSize, double xNorm)
-        {
-            return (int)(viewSize.Height * xNorm);
         }
     }
 }
