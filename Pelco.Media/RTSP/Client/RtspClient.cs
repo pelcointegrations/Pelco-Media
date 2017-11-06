@@ -34,7 +34,7 @@ namespace Pelco.Media.RTSP.Client
             _uri = uri;
             _cseq = 0;
             _credentials = creds;
-            _defaultTimeout = TimeSpan.FromSeconds(5);
+            _defaultTimeout = TimeSpan.FromSeconds(20);
             _callbacks = new ConcurrentDictionary<int, AsyncResponse>();
             _connection = new RtspConnection(IPAddress.Parse(uri.Host), uri.Port == -1 ? DEFAULT_RTSP_PORT : uri.Port);
             _listener = new RtspListener(_connection);
@@ -110,6 +110,7 @@ namespace Pelco.Media.RTSP.Client
                     request.Authorization = _authResponse.Generate(request.Method, request.URI);
                 }
 
+                LOG.Info($"Sending request: {request}");
                 asyncRes = SendSync(request);
                 RtspResponse response = asyncRes.Get(timeout);
 
@@ -196,6 +197,7 @@ namespace Pelco.Media.RTSP.Client
             if (e.Message is RtspResponse)
             {
                 var response = e.Message as RtspResponse;
+                LOG.Info($"Received response: {response}");
                 int cseq = response.CSeq;
                 if (cseq <= 0)
                 {

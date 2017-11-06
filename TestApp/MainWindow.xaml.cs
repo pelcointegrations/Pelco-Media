@@ -57,11 +57,16 @@ namespace TestApp
                     _player.Initialize();
                     _player.Start();
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                
+                    Console.WriteLine(ex.Message);
                 }
             });
+        }
+
+        private void Window_Unloaded(object sender, RoutedEventArgs e)
+        {
+            _player.Dispose();
         }
     }
 }
