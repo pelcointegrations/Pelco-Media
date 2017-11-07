@@ -2,6 +2,7 @@
 using NLog;
 using Pelco.Metadata.UI;
 using Pelco.Metadata.UI.Overlays;
+using System;
 using System.Windows;
 using System.Windows.Media;
 
@@ -15,7 +16,19 @@ namespace TestApp
         {
             if (discovered != null)
             {
-                LOG.Info($"Drawing '{discovered.faces.Items.Count}' faces");
+                Application.Current.Dispatcher.BeginInvoke((Action)(() =>
+                {
+                    ClearOverlays();
+                    foreach (var face in discovered.faces.Items)
+                    {
+                        DrawOverlay(new RectangleOverlay()
+                        {
+                            BorderColor = Colors.Red,
+                            UpperLeft = new Point(face.UpperLeftx, face.UpperLefty),
+                            BottomRight = new Point(face.BottomRightx, face.BottomRighty)
+                        });
+                    }
+                }));
             }
             return true;
         }

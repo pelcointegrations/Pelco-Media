@@ -49,7 +49,7 @@ namespace TestApp
                     {
                         PipelineCreator = _pc,
                         TypeFilter = MimeType.CreateApplicationType("vnd.opencv.facial_detection"),
-                        Uri = new Uri("rtsp://10.220.232.48:5544/stream?user_info=admin&device_id=7fe3c767-7853-45fe-8a75-045735c11cbe&data_source_id=c91bcf36-20c7-3ad3-97f3-4bcd4c6a1eb5%3AVideoSource%3Ametadata%3Ametadata&data_interface_id=0&multicast=false&transcoded=false")
+                        Uri = new Uri("rtsp://127.0.0.1:5544/stream?user_info=admin&device_id=fb1ab8c3-caf4-4d63-af2f-5d6eb7a4b2ac&data_source_id=uuid%3A1801101A-8000-0000-0802-6B6B606E0004%3Ametadata%3Ametadata&data_interface_id=0&multicast=false&transcoded=false")
                     };
 
                     _player = new VxMetadataPlayer(config);
