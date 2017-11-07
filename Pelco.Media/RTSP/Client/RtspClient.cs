@@ -110,7 +110,6 @@ namespace Pelco.Media.RTSP.Client
                     request.Authorization = _authResponse.Generate(request.Method, request.URI);
                 }
 
-                LOG.Info($"Sending request: {request}");
                 asyncRes = SendSync(request);
                 RtspResponse response = asyncRes.Get(timeout);
 
@@ -197,7 +196,7 @@ namespace Pelco.Media.RTSP.Client
             if (e.Message is RtspResponse)
             {
                 var response = e.Message as RtspResponse;
-                LOG.Info($"Received response: {response}");
+
                 int cseq = response.CSeq;
                 if (cseq <= 0)
                 {
