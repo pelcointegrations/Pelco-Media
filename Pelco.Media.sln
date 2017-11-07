@@ -1,15 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.3
+VisualStudioVersion = 15.0.27004.2006
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pelco.Media", "Pelco.Media\Pelco.Media.csproj", "{D2DBCFAD-A3E6-4850-A3FD-9160C150FA22}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pelco.Metadata", "Pelco.Metadata\Pelco.Metadata.csproj", "{8CBBCF33-AE8F-4337-B2DD-A06E053DC2E3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pelco.Media.Tests", "Pelco.Media.Tests\Pelco.Media.Tests.csproj", "{8E546290-6C97-4481-9C3F-FB54ACB8D295}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApp", "TestApp\TestApp.csproj", "{0485B151-7BF7-444A-93F8-4A371893E646}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,10 +27,6 @@ Global
 		{8E546290-6C97-4481-9C3F-FB54ACB8D295}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8E546290-6C97-4481-9C3F-FB54ACB8D295}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8E546290-6C97-4481-9C3F-FB54ACB8D295}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0485B151-7BF7-444A-93F8-4A371893E646}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0485B151-7BF7-444A-93F8-4A371893E646}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0485B151-7BF7-444A-93F8-4A371893E646}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0485B151-7BF7-444A-93F8-4A371893E646}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
