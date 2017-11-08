@@ -1,18 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.3
+VisualStudioVersion = 15.0.27004.2006
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pelco.Media", "Pelco.Media\Pelco.Media.csproj", "{D2DBCFAD-A3E6-4850-A3FD-9160C150FA22}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pelco.Metadata", "Pelco.Metadata\Pelco.Metadata.csproj", "{8CBBCF33-AE8F-4337-B2DD-A06E053DC2E3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pelco.Media.Tests", "Pelco.Media.Tests\Pelco.Media.Tests.csproj", "{8E546290-6C97-4481-9C3F-FB54ACB8D295}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C2FEC4C9-0653-46A4-8585-3EDCE712E85B}"
-	ProjectSection(SolutionItems) = preProject
-		TestApp\TestApp.csproj = TestApp\TestApp.csproj
-	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
