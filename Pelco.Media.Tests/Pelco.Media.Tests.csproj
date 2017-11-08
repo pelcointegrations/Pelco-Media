@@ -57,6 +57,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\MimeTypeTests.cs" />
     <Compile Include="Common\NtpTimeTests.cs" />
     <Compile Include="Integrations\RtspClientServerTests.cs" />
     <Compile Include="Integrations\RtspCommunicationFixture.cs" />

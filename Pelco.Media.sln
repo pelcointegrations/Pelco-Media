@@ -9,7 +9,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pelco.Metadata", "Pelco.Met
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pelco.Media.Tests", "Pelco.Media.Tests\Pelco.Media.Tests.csproj", "{8E546290-6C97-4481-9C3F-FB54ACB8D295}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApp", "TestApp\TestApp.csproj", "{0485B151-7BF7-444A-93F8-4A371893E646}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C2FEC4C9-0653-46A4-8585-3EDCE712E85B}"
+	ProjectSection(SolutionItems) = preProject
+		TestApp\TestApp.csproj = TestApp\TestApp.csproj
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,10 +32,6 @@ Global
 		{8E546290-6C97-4481-9C3F-FB54ACB8D295}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8E546290-6C97-4481-9C3F-FB54ACB8D295}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8E546290-6C97-4481-9C3F-FB54ACB8D295}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0485B151-7BF7-444A-93F8-4A371893E646}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0485B151-7BF7-444A-93F8-4A371893E646}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0485B151-7BF7-444A-93F8-4A371893E646}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0485B151-7BF7-444A-93F8-4A371893E646}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

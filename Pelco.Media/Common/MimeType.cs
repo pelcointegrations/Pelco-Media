@@ -1,4 +1,7 @@
-﻿namespace Pelco.Media.Common
+﻿using System;
+using System.Text.RegularExpressions;
+
+namespace Pelco.Media.Common
 {
     public class MimeType
     {
@@ -61,6 +64,22 @@
         {
             return (type.Type.Equals(WILDCARD) || type.Type.Equals(Type))
                    && (type.Subtype.Equals(WILDCARD) || type.Subtype.Equals(Subtype));
+        }
+
+        public static MimeType Parse(string value)
+        {
+            var parts = Regex.Split(value, @"\s*/\s*");
+            if (parts.Length == 1)
+            {
+                return MimeType.Create(parts[0].Trim(), WILDCARD);
+            }
+            else if(parts.Length == 2)
+            {
+                var subType = string.IsNullOrEmpty(parts[1]) ? WILDCARD : parts[1].Trim();
+                return MimeType.Create(parts[0].Trim(), subType);
+            }
+
+            throw new ArgumentException("Invalid mimetype provided.");
         }
 
         public static MimeType Create(string type, string subtype)
