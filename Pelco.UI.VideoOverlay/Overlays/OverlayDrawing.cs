@@ -1,8 +1,7 @@
-﻿using Pelco.PDK.Metadata.UI.Overlays;
-using System;
+﻿using System;
 using System.Windows.Media;
 
-namespace Pelco.Metadata.UI.Overlays
+namespace Pelco.UI.VideoOverlay.Overlays
 {
     /// <summary>
     /// Base class for all overlay drawings.
@@ -23,13 +22,6 @@ namespace Pelco.Metadata.UI.Overlays
         /// Returns the ID of the overlay
         /// </summary>
         public string ID { get; }
-
-        /// <summary>
-        /// Draw the shapen into the context.
-        /// </summary>
-        /// <param name="context">Context in which to draw.</param>
-        /// <param name="translator">Point Translator used to translate the normalized point to the actual point</param>
-        public abstract void Draw(DrawingContext context, IPointTranslator translator);
 
         /// <summary>
         /// Returns true if the overlay id's are equal, false otherwise

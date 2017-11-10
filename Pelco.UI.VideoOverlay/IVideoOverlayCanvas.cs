@@ -1,7 +1,7 @@
 ﻿using Pelco.Media.Pipeline;
 using System.Windows;
 
-namespace Pelco.Metadata.UI
+namespace Pelco.UI.VideoOverlay
 {
     public interface IVideoOverlayCanvas<T> : IObjectTypeSink<T>
     {

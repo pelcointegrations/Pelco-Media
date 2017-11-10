@@ -1,17 +1,19 @@
 ﻿using System;
 using System.Windows;
 using Pelco.Media.Pipeline;
-using Pelco.Metadata.UI.Overlays;
+using Pelco.UI.VideoOverlay.Overlays;
 
-namespace Pelco.Metadata.UI
+namespace Pelco.UI.VideoOverlay
 {
     public class VideoOverlayCanvasBase<T> : IVideoOverlayCanvas<T>
     {
         private VideoOverlayCanvas _canvas;
+        private VideoOverlayCanvasViewModel _viewModel;
 
         public VideoOverlayCanvasBase()
         {
-            _canvas = new VideoOverlayCanvas();
+            _viewModel = new VideoOverlayCanvasViewModel();
+            _canvas = new VideoOverlayCanvas(_viewModel);
         }
 
         public FrameworkElement GetVisualOverlay()
@@ -35,41 +37,38 @@ namespace Pelco.Metadata.UI
 
         public void OnOverlayWindowChange(Rect normalizedVideoWindow, double rotation)
         {
-            Application.Current.Dispatcher.Invoke(() =>
+            _canvas.Dispatcher.BeginInvoke((Action)(() =>
             {
-                _canvas.DrawingCanvas.OnOverlayWindowChange(normalizedVideoWindow, rotation);
-            });
+                _viewModel.OnOverlaySizeChange(normalizedVideoWindow, rotation);
+            }));
         }
 
         public void OnOverlayDigitalPtzChange(Rect normalizedPtzWindow)
         {
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                _canvas.DrawingCanvas.OnOverlayDigitalPtzChange(normalizedPtzWindow);
-            });
+          
         }
 
         public void OnOverlayStreamAspectRatioChange(double aspectRatio)
         {
-            Application.Current.Dispatcher.Invoke(() =>
+            _canvas.Dispatcher.BeginInvoke((Action)(() =>
             {
-                _canvas.DrawingCanvas.OnOverlayStreamAspectRatioChange(aspectRatio);
-            });
+                _viewModel.OnStreamAspectRationChange(aspectRatio);
+            }));
         }
 
-        protected void DrawOverlay(OverlayDrawing drawing)
+        protected void DrawOverlay(OverlayDrawing overlay)
         {
-            _canvas.DrawingCanvas.Draw(drawing);
+            _viewModel.AddOverlay(overlay);
         }
 
         protected void RemoveOverlay(string overlayId)
         {
-            _canvas.DrawingCanvas.Remove(overlayId);
+            _viewModel.RemoveOverlay(overlayId);
         }
 
         protected void ClearOverlays()
         {
-            _canvas.DrawingCanvas.RemoveAllOverlays();
+            _viewModel.RemoveAllOverlays();
         }
     }
 }
