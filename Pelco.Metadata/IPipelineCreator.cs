@@ -23,7 +23,8 @@ namespace Pelco.Metadata
         /// </code>
         /// </summary>
         /// <param name="src">The Pipeline's source for metadata.</param>
+        /// <param name="isLive">Flag indicating if the provided source is live or not.</param>
         /// <returns>A <see cref="MediaPipeline"/> for processing a metadata stream</returns>
-        MediaPipeline CreatePipeline(ISource src);
+        MediaPipeline CreatePipeline(ISource src, bool isLive);
     }
 }

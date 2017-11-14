@@ -19,7 +19,16 @@ namespace Pelco.Media.Pipeline.Transforms
             try
             {
                 var packet = RtpPacket.Decode(buffer);
-                return PushBuffer(packet.Payload);
+                var paylaod = packet.Payload;
+
+                if (packet.HasExtensionHeader && packet.ExtensionHeaderData == OnvifRtpHeader.PROFILE_ID)
+                {
+                    // Packet contains Onvif header extension set packet time reference.
+                    var onvifHdr = OnvifRtpHeader.Decode(packet.ExtensionData);
+                    paylaod.TimeReference = onvifHdr.Time;
+                }
+
+                return PushBuffer(paylaod);
             }
             catch (Exception e)
             {

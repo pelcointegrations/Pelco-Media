@@ -7,7 +7,7 @@
     <ProjectGuid>{8CBBCF33-AE8F-4337-B2DD-A06E053DC2E3}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Pelco.PDK.Metadata</RootNamespace>
+    <RootNamespace>Pelco.Metadata</RootNamespace>
     <AssemblyName>Pelco.Metadata</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -34,6 +34,9 @@
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
       <HintPath>..\packages\NLog.4.4.12\lib\net45\NLog.dll</HintPath>
     </Reference>
+    <Reference Include="NodaTime, Version=2.2.2.0, Culture=neutral, PublicKeyToken=4226afe0d9b296d1, processorArchitecture=MSIL">
+      <HintPath>..\packages\NodaTime.2.2.2\lib\net45\NodaTime.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Collections.Immutable, Version=1.2.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Collections.Immutable.1.4.0\lib\portable-net45+win8+wp8+wpa81\System.Collections.Immutable.dll</HintPath>
@@ -48,6 +51,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IPipelineCreator.cs" />
+    <Compile Include="SynchronizedObject.cs" />
+    <Compile Include="SynchronizingPlaybackTransform.cs" />
     <Compile Include="VxMetadataPlayer.cs" />
     <Compile Include="PlayerConfiguration.cs" />
     <Compile Include="PlayingState.cs" />

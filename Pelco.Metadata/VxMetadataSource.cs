@@ -131,6 +131,8 @@ namespace Pelco.Metadata
         {
             lock (SourceLock)
             {
+                _playbackTime = seekTo;
+
                 if (_playbackTime.HasValue)
                 {
                     // Our current session(s) are playback sessions.
@@ -144,8 +146,6 @@ namespace Pelco.Metadata
                     ReInitialize(_originalUri);
                     Play(_clientSink, seekTo, interleaved: true);
                 }
-
-                _playbackTime = seekTo;
             }
         }
 
@@ -362,6 +362,7 @@ namespace Pelco.Metadata
         {
             lock (SourceLock)
             {
+                System.Diagnostics.Debugger.Break();
                 // No need to check initialization state because tracks are not available if we have
                 // not first initialized things.
 

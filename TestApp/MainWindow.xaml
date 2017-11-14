@@ -5,10 +5,21 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TestApp"
         mc:Ignorable="d"
-        Title="MainWindow" Height="800" Width="800"
+        Title="MainWindow" Height="850" Width="800"
         Background="#222"
         Loaded="Window_Loaded"
         Unloaded="Window_Unloaded">
-    <Grid Name="Grid">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <WrapPanel>
+            <Button Name="Pause" Content="Pause" Margin="5" Click="Pause_Click"/>
+            <Button Name="Resume" Content="Resume" Margin="5" Click="Resume_Click"/>
+        </WrapPanel>
+        <Grid Name="Grid" Grid.Row="1">
+            
+        </Grid>
     </Grid>
 </Window>

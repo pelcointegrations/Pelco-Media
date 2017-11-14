@@ -19,6 +19,7 @@ namespace Pelco.Metadata
     {
         private static readonly object PlayerLock = new object();
 
+        private bool _isLive;
         private bool _initialized;
         private DateTime? _pauseTime;
         private MediaPipeline _pipeline;
@@ -42,6 +43,7 @@ namespace Pelco.Metadata
                 throw new ArgumentException("Player configuration must provide a IPipelineCreator.");
             }
 
+            _isLive = false;
             _pauseTime = null;
             _initialized = false;
             _source = new VxMetadataSource(_config.Uri, _config.Creds);
@@ -78,19 +80,41 @@ namespace Pelco.Metadata
 
         public void Start(DateTime? playAt = null)
         {
-            var link = new RtpPayloadTransform();
+            lock (PlayerLock)
+            {
+                if (_pipeline != null)
+                {
+                    // Already started.
+                    return;
+                }
 
-            _source.Play(link, playAt);
+                var link = new RtpPayloadTransform();
 
-            _pipeline = _config.PipelineCreator.CreatePipeline(link);
+                _isLive = !playAt.HasValue;
+                _source.Play(link, playAt);
 
-            _pipeline.Start();
+                _pipeline = _config.PipelineCreator.CreatePipeline(link, _isLive);
+
+                _pipeline.Start();
+            }
         }
 
         public void Seek(DateTime seekTo)
         {
             lock (PlayerLock)
             {
+                System.Diagnostics.Debugger.Launch();
+                if (_isLive)
+                {
+                    _isLive = false;
+                    _pipeline.Stop();
+
+                    var link = new RtpPayloadTransform();
+
+                    _pipeline = _config.PipelineCreator.CreatePipeline(link, _isLive);
+                    _pipeline.Start();
+                }
+
                 _source.Seek(seekTo);
             }
         }
@@ -120,6 +144,7 @@ namespace Pelco.Metadata
                 _pipeline.SetFlushing(true);
                 _source.JumpToLive();
                 _pipeline.SetFlushing(false);
+                _isLive = true;
             }
         }
 
