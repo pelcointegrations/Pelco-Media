@@ -103,7 +103,6 @@ namespace Pelco.Metadata
         {
             lock (PlayerLock)
             {
-                System.Diagnostics.Debugger.Launch();
                 if (_isLive)
                 {
                     _isLive = false;

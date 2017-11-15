@@ -362,7 +362,6 @@ namespace Pelco.Metadata
         {
             lock (SourceLock)
             {
-                System.Diagnostics.Debugger.Break();
                 // No need to check initialization state because tracks are not available if we have
                 // not first initialized things.
 
