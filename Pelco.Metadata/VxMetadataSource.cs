@@ -131,8 +131,6 @@ namespace Pelco.Metadata
         {
             lock (SourceLock)
             {
-                _playbackTime = seekTo;
-
                 if (_playbackTime.HasValue)
                 {
                     // Our current session(s) are playback sessions.

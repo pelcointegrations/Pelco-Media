@@ -124,6 +124,7 @@ namespace Pelco.Media.RTSP
 
             LOG.Debug($"Attempting to parsing RTSP Transport header: {value}");
 
+            TransportType discoveredType = TransportType.Unknown;
             TransportHeader.Builder builder = TransportHeader.CreateBuilder();
 
             string[] parts = value.Split(new char[] { ';' });
@@ -136,13 +137,14 @@ namespace Pelco.Media.RTSP
                         {
                             if (keyValue[0] == "RTP/AVP/TCP")
                             {
-                                builder.Type(TransportType.RtspInterleaved);
+                                discoveredType = TransportType.RtspInterleaved;
+                                builder.Type(discoveredType);
                             }
-                            else if (keyValue[0] == "unicast")
+                            else if (keyValue[0] == "unicast" && discoveredType != TransportType.RtspInterleaved)
                             {
                                 builder.Type(TransportType.UdpUnicast);
                             }
-                            else if (keyValue[0] == "multicast")
+                            else if (keyValue[0] == "multicast" && discoveredType != TransportType.RtspInterleaved)
                             {
                                 builder.Type(TransportType.UdpMulticast);
                             }
