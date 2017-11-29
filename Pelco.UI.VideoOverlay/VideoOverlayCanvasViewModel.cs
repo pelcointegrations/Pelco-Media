@@ -5,20 +5,22 @@ using Prism.Mvvm;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using NodaTime;
 
 namespace Pelco.UI.VideoOverlay
 {
     public class VideoOverlayCanvasViewModel : BindableBase
     {
+        private static readonly object PlaybackLock = new object();
         private static readonly Logger LOG = LogManager.GetCurrentClassLogger();
 
+        private bool _isDirty;
+        private double _scale;
+        private long _anchorTime;
+        private long _initiatedTime;
         private FrameworkElement _control;
         private double _streamAspectRatio;
         private double _videoWindowRotation;
@@ -32,6 +34,8 @@ namespace Pelco.UI.VideoOverlay
 
         public VideoOverlayCanvasViewModel()
         {
+            IsLiveStream = true;
+
             _overlays = new ConcurrentDictionary<string, OverlayDrawing>();
             _drawLoopTokenSrc = new CancellationTokenSource();
             _videoWindowRotation = 0.0;
@@ -39,6 +43,8 @@ namespace Pelco.UI.VideoOverlay
             _normalizedDPTZWindow = new Rect(0.0, 0.0, 1.0, 1.0); // default to whole frame (normalized to stream frame)
             _normalizedViewWindow = new Rect(0.0, 0.0, 0.0, 0.0);  // default to zero size to force us to derive from  aspect ratio
         }
+
+        public bool IsLiveStream { get; set; }
 
         public WriteableBitmap OverlayBitmap
         {
@@ -62,17 +68,46 @@ namespace Pelco.UI.VideoOverlay
         {
             RemoveOverlay(overlay.ID);
             _overlays.TryAdd(overlay.ID, overlay);
+
+            _isDirty = true;
         }
 
         public void RemoveOverlay(string id)
         {
-            OverlayDrawing overlay;
-            _overlays.TryRemove(id, out overlay);
+            if (IsLiveStream)
+            {
+                OverlayDrawing overlay;
+                _overlays.TryRemove(id, out overlay);
+
+                _isDirty = true;
+            }
         }
 
         public void RemoveAllOverlays()
         {
-            _overlays.Clear();
+            if (IsLiveStream)
+            {
+                _overlays.Clear();
+                _isDirty = true;
+            }
+        }
+
+        public void UpdatePlaybackTimingInfo(DateTime? anchor, DateTime? initiation, double scale)
+        {
+            lock (PlaybackLock)
+            {
+                if (anchor.HasValue)
+                {
+                    _anchorTime = Instant.FromDateTimeUtc(anchor.Value).ToUnixTimeMilliseconds();
+                }
+
+                if (initiation.HasValue)
+                {
+                    _initiatedTime = Instant.FromDateTimeUtc(initiation.Value).ToUnixTimeMilliseconds();
+                }
+
+                _scale = scale;
+            }
         }
 
         public void OnStreamAspectRationChange(double aspectRatio)
@@ -107,10 +142,21 @@ namespace Pelco.UI.VideoOverlay
 
         private void Draw(OverlayDrawing drawing)
         {
-            if (drawing is RectangleOverlay)
+            if (drawing is EllipseOverlay)
+            {
+                DrawEllipse(drawing as EllipseOverlay);
+            }
+            else if (drawing is RectangleOverlay)
             {
                 DrawRectangle(drawing as RectangleOverlay);
             }
+        }
+
+        private void DrawEllipse(EllipseOverlay ellipse)
+        {
+            var ul = ToActualPoint(ellipse.UpperLeft);
+            var br = ToActualPoint(ellipse.BottomRight);
+            OverlayBitmap.DrawEllipse((int)ul.X, (int)ul.Y, (int)br.X, (int)br.Y, ellipse.BorderColor);
         }
 
         private void DrawRectangle(RectangleOverlay overlay)
@@ -290,20 +336,70 @@ namespace Pelco.UI.VideoOverlay
         {
             lock (this)
             {
-                _control.Dispatcher.Invoke(() =>
+                    List<OverlayDrawing> toRemove = new List<OverlayDrawing>();
+
+                if (OverlayBitmap != null && (_isDirty || !IsLiveStream))
                 {
-                    if (OverlayBitmap != null)
+                    OverlayBitmap.Clear();
+                    foreach (var overlay in _overlays)
                     {
-                        OverlayBitmap.Clear();
-                        if (_overlays.Count > 0)
+                        if (IsLiveStream)
                         {
-                            foreach (var overlay in _overlays)
+                            Draw(overlay.Value);
+                        }
+                        else
+                        {
+                            var ts = overlay.Value.TimeReference;
+                            if (ts != null)
                             {
-                                Draw(overlay.Value);
+                                var playbackTime = GetCurrentPlaybackTime();
+                                var diff = playbackTime - ts;
+
+                                if (Math.Abs(diff.TotalMilliseconds) <= 20)
+                                {
+                                    Draw(overlay.Value);
+                                }
+                                else if (diff.TotalMilliseconds > 100)
+                                {
+                                    toRemove.Add(overlay.Value);
+                                }
+                            }
+                            else
+                            {
+                                LOG.Info($"While processing playback overlays, detected overlay '{overlay.Value.ID}' does not have timestamp, ignoring...");
+                                toRemove.Add(overlay.Value);
                             }
                         }
+
+                        _isDirty = false;
                     }
-                });
+
+                    if (!IsLiveStream)
+                    {
+                        // Remove old overlays.
+                        OverlayDrawing drawing;
+                        toRemove.ForEach(o => _overlays.TryRemove(o.ID, out drawing));
+                    }
+                }
+            }
+        }
+
+        private DateTime GetCurrentPlaybackTime()
+        {
+            lock (PlaybackLock)
+            {
+                var now = SystemClock.Instance.GetCurrentInstant();
+
+                if (_anchorTime == 0 && _initiatedTime == 0)
+                {
+                    return now.ToDateTimeUtc();
+                }
+
+                var current = now.ToUnixTimeTicks() / NodaConstants.TicksPerMillisecond;
+                long currentAnchor = ((long)((current - _initiatedTime) * _scale) + _anchorTime);
+                Instant whereWeShouldBe = Instant.FromUnixTimeMilliseconds(currentAnchor);
+
+                return whereWeShouldBe.ToDateTimeUtc();
             }
         }
     }

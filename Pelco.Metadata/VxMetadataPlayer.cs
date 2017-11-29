@@ -25,6 +25,7 @@ namespace Pelco.Metadata
         private MediaPipeline _pipeline;
         private VxMetadataSource _source;
         private PlayerConfiguration _config;
+        private ITransform _transformSource;
 
         /// <summary>
         /// Constructor
@@ -88,12 +89,12 @@ namespace Pelco.Metadata
                     return;
                 }
 
-                var link = new RtpPayloadTransform();
+                _transformSource = new RtpPayloadTransform();
 
                 _isLive = !playAt.HasValue;
-                _source.Play(link, playAt);
+                _source.Play(_transformSource, playAt);
 
-                _pipeline = _config.PipelineCreator.CreatePipeline(link, _isLive);
+                _pipeline = _config.PipelineCreator.CreatePipeline(_transformSource, _isLive);
 
                 _pipeline.Start();
             }
@@ -103,14 +104,18 @@ namespace Pelco.Metadata
         {
             lock (PlayerLock)
             {
+                if (_transformSource == null)
+                {
+                    throw new ArgumentException("Unable to seek before starting player");
+                }
+
                 if (_isLive)
                 {
                     _isLive = false;
+                    _pipeline.SetFlushing(true);
                     _pipeline.Stop();
 
-                    var link = new RtpPayloadTransform();
-
-                    _pipeline = _config.PipelineCreator.CreatePipeline(link, _isLive);
+                    _pipeline = _config.PipelineCreator.CreatePipeline(_transformSource, _isLive);
                     _pipeline.Start();
                 }
 

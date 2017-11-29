@@ -157,6 +157,7 @@ namespace Pelco.Metadata
 
                     _playbackTime = null;
 
+                    TeardownAll();
                     ReInitialize(_originalUri);
                     Play(_clientSink, playAt: null, interleaved: false);
                 }
@@ -489,6 +490,10 @@ namespace Pelco.Metadata
             }
         }
 
+        private void TeardownAll()
+        {
+            _sessions.ForEach(s => Teardown(s, true));
+        }
 
         private void CheckAndStartRefreshTimer(uint timeoutSecs)
         {

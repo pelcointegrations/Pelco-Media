@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Pelco.Metadata;
+using System;
 using System.Windows.Media;
 
 namespace Pelco.UI.VideoOverlay.Overlays
@@ -6,7 +7,7 @@ namespace Pelco.UI.VideoOverlay.Overlays
     /// <summary>
     /// Base class for all overlay drawings.
     /// </summary>
-    public abstract class OverlayDrawing : IEquatable<OverlayDrawing>
+    public abstract class OverlayDrawing : SynchronizedObject, IEquatable<OverlayDrawing>
     {
         protected const int STROKE_THICKNESS = 2;
 

@@ -1,7 +1,7 @@
 ﻿using FacialDetectionCommon;
 using NLog;
-using Pelco.Metadata.UI;
-using Pelco.Metadata.UI.Overlays;
+using Pelco.UI.VideoOverlay;
+using Pelco.UI.VideoOverlay.Overlays;
 using System;
 using System.Windows;
 using System.Windows.Media;

@@ -16,6 +16,19 @@ namespace Pelco.UI.VideoOverlay
             _canvas = new VideoOverlayCanvas(_viewModel);
         }
 
+        public bool IsLiveStream
+        {
+            get
+            {
+                return _viewModel.IsLiveStream;
+            }
+
+            set
+            {
+                _viewModel.IsLiveStream = value;
+            }
+        }
+
         public FrameworkElement GetVisualOverlay()
         {
             return _canvas;
@@ -35,6 +48,11 @@ namespace Pelco.UI.VideoOverlay
         {
         }
 
+        public void UpdatePlaybackTimingInfo(DateTime? anchor, DateTime? initiation, double scale)
+        {
+            _viewModel.UpdatePlaybackTimingInfo(anchor, initiation, scale);
+        }
+
         public void OnOverlayWindowChange(Rect normalizedVideoWindow, double rotation)
         {
             _canvas.Dispatcher.BeginInvoke((Action)(() =>
@@ -45,7 +63,6 @@ namespace Pelco.UI.VideoOverlay
 
         public void OnOverlayDigitalPtzChange(Rect normalizedPtzWindow)
         {
-          
         }
 
         public void OnOverlayStreamAspectRatioChange(double aspectRatio)
