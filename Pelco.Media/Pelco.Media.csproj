@@ -57,6 +57,7 @@
     <Compile Include="Pipeline\IObjectTypeSink.cs" />
     <Compile Include="Pipeline\ISink.cs" />
     <Compile Include="Pipeline\ISource.cs" />
+    <Compile Include="Pipeline\MediaEvent.cs" />
     <Compile Include="Pipeline\MediaPipeline.cs" />
     <Compile Include="Pipeline\ObjectTypeHandlerBase.cs" />
     <Compile Include="Pipeline\ObjectTypeSinkBase.cs" />
@@ -90,6 +91,7 @@
     <Compile Include="RTSP\Client\RtspClientException.cs" />
     <Compile Include="RTSP\InterleavedData.cs" />
     <Compile Include="RTSP\IRtspConnection.cs" />
+    <Compile Include="RTSP\PlaybackBufferStateEvent.cs" />
     <Compile Include="RTSP\RtpInterleavedMediaSource.cs" />
     <Compile Include="RTSP\RtspException.cs" />
     <Compile Include="RTSP\RtspHeaders.cs" />

@@ -108,6 +108,7 @@ namespace Pelco.Media.Pipeline
                 }
 
                 srcBuilder.Add(source);
+
                 this.source = source;
 
                 return this;
@@ -136,6 +137,7 @@ namespace Pelco.Media.Pipeline
 
                 transformBuilder.Add(transform);
                 this.source.DownstreamLink = transform;
+                ((ISource)transform).UpstreamLink = this.source;
                 this.source = transform;
 
                 return this;
@@ -164,6 +166,7 @@ namespace Pelco.Media.Pipeline
 
                 sinkBuilder.Add(sink);
                 this.source.DownstreamLink = sink;
+                sink.UpstreamLink = this.source;
                 this.source = null;
 
                 return this;

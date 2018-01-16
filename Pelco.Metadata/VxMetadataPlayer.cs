@@ -145,10 +145,19 @@ namespace Pelco.Metadata
         {
             lock (PlayerLock)
             {
-                _pipeline.SetFlushing(true);
-                _source.JumpToLive();
-                _pipeline.SetFlushing(false);
-                _isLive = true;
+                if (!_isLive)
+                {
+                    _isLive = true;
+
+                    _pipeline.SetFlushing(true);
+                    _pipeline.Stop();
+
+                    _pipeline = _config.PipelineCreator.CreatePipeline(_transformSource, _isLive);
+                    _pipeline.SetFlushing(false);
+                    _pipeline.Start();
+
+                    _source.JumpToLive();
+                }
             }
         }
 

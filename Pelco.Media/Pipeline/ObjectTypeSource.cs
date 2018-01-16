@@ -6,6 +6,7 @@
 
         private volatile bool _isFlushing;
         private ISink _downstreamLink;
+        private ISource _upstreamLink;
 
         public ISink DownstreamLink
         {
@@ -19,6 +20,20 @@
                 _downstreamLink = value;
             }
         }
+
+        public ISource UpstreamLink
+        {
+            get
+            {
+                return _upstreamLink;
+            }
+
+            set
+            {
+                _upstreamLink = value;
+            }
+        }
+
 
         public bool Flushing
         {
@@ -59,6 +74,11 @@
 
                 return true;
             }
+        }
+
+        public void OnMediaEvent(MediaEvent e)
+        {
+            UpstreamLink?.OnMediaEvent(e);
         }
     }
 }

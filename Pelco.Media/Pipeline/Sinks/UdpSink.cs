@@ -15,6 +15,7 @@ namespace Pelco.Media.Pipeline.Sinks
 
         private Socket _socket;
         private IPEndPoint _target;
+        private ISource _upstreamLink;
 
         /// <summary>
         /// Constructor
@@ -26,6 +27,19 @@ namespace Pelco.Media.Pipeline.Sinks
 
             _socket = new Socket(SocketType.Dgram, ProtocolType.Udp);
             _socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+        }
+
+        public ISource UpstreamLink
+        {
+            get
+            {
+                return _upstreamLink;
+            }
+
+            set
+            {
+                _upstreamLink = value;
+            }
         }
 
         /// <summary>
@@ -65,6 +79,11 @@ namespace Pelco.Media.Pipeline.Sinks
             }
 
             return true;
+        }
+
+        public virtual void PushEvent(MediaEvent e)
+        {
+            UpstreamLink?.OnMediaEvent(e);
         }
     }
 }

@@ -463,17 +463,18 @@ namespace Pelco.Metadata
                 LOG.Debug($"Tearing RTSP session '{session.ID}' at '{session.Track.ControlUri}'");
 
                 // TODO(frank.lamar): Use async request when support is added to the client.
-                var response = _client.Send(RtspRequest.CreateBuilder()
-                                                       .Uri(_currentUri)
-                                                       .Method(RtspRequest.RtspMethod.TEARDOWN)
-                                                       .AddHeader(RtspHeaders.Names.SESSION, session.ID)
-                                                       .Build());
-
-                if (response.ResponseStatus.Code >= RtspResponse.Status.BadRequest.Code)
-                {
-                    LOG.Error($"Failed to teardown session '{session.ID}' received {response.ResponseStatus}");
-                }
-
+                _client.SendAsync(RtspRequest.CreateBuilder()
+                                             .Uri(_currentUri)
+                                             .Method(RtspRequest.RtspMethod.TEARDOWN)
+                                             .AddHeader(RtspHeaders.Names.SESSION, session.ID)
+                                             .Build(),
+                                  (res) =>
+                                  {
+                                      if (res.ResponseStatus.Code >= RtspResponse.Status.BadRequest.Code)
+                                      {
+                                          LOG.Error($"Failed to teardown session '{session.ID}' received {res.ResponseStatus}");
+                                      }
+                                  });
             }
             catch (Exception e)
             {
@@ -492,7 +493,8 @@ namespace Pelco.Metadata
 
         private void TeardownAll()
         {
-            _sessions.ForEach(s => Teardown(s, true));
+            _sessions.ForEach(s => Teardown(s, andRemove: false));
+            _sessions.Clear();
         }
 
         private void CheckAndStartRefreshTimer(uint timeoutSecs)
@@ -539,11 +541,18 @@ namespace Pelco.Metadata
 
                     try
                     {
-                        _client.Send(RtspRequest.CreateBuilder()
-                                                .Uri(_currentUri)
-                                                .Method(RtspRequest.RtspMethod.GET_PARAMETER)
-                                                .AddHeader(RtspHeaders.Names.SESSION, sessionId)
-                                                .Build());
+                        _client.SendAsync(RtspRequest.CreateBuilder()
+                                                     .Uri(_currentUri)
+                                                     .Method(RtspRequest.RtspMethod.GET_PARAMETER)
+                                                     .AddHeader(RtspHeaders.Names.SESSION, sessionId)
+                                                     .Build(),
+                                          (res) =>
+                                          {
+                                              if (res.ResponseStatus.Code >= RtspResponse.Status.BadRequest.Code)
+                                              {
+                                                  LOG.Error($"Failed to refresh session '{sessionId}' received {res.ResponseStatus}");
+                                              }
+                                          });
                     }
                     catch (Exception ex)
                     {
@@ -582,6 +591,7 @@ namespace Pelco.Metadata
             public RtpChannelSink(int channel, ISink rtpSink)
             {
                 DownstreamLink = rtpSink;
+                rtpSink.UpstreamLink = this;
                 Channel = channel;
             }
 

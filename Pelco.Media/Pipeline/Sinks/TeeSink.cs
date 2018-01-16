@@ -11,7 +11,21 @@ namespace Pelco.Media.Pipeline.Sinks
         private const int DEFAULT_QUEUE_SIZE = 100;
 
         private int _queueSize;
+        private ISource _upstreamLink;
         private ConcurrentBag<ISink> _clients;
+
+        public ISource UpstreamLink
+        {
+            get
+            {
+                return _upstreamLink;
+            }
+
+            set
+            {
+                _upstreamLink = value;
+            }
+        }
 
         public TeeSink(int queueSize = DEFAULT_QUEUE_SIZE)
         {
@@ -50,6 +64,11 @@ namespace Pelco.Media.Pipeline.Sinks
             }
 
             return true;
+        }
+
+        public virtual void PushEvent(MediaEvent e)
+        {
+            UpstreamLink?.OnMediaEvent(e);
         }
 
         class TeeOutflowSource : TransformBase

@@ -52,7 +52,6 @@
   <ItemGroup>
     <Compile Include="IPipelineCreator.cs" />
     <Compile Include="SynchronizedObject.cs" />
-    <Compile Include="SynchronizingPlaybackTransform.cs" />
     <Compile Include="VxMetadataPlayer.cs" />
     <Compile Include="PlayerConfiguration.cs" />
     <Compile Include="PlayingState.cs" />

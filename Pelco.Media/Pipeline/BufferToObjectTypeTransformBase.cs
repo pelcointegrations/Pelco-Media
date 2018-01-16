@@ -7,6 +7,11 @@
             base.Stop();
         }
 
+        public virtual void PushEvent(MediaEvent e)
+        {
+            UpstreamLink?.OnMediaEvent(e);
+        }
+
         public abstract bool WriteBuffer(ByteBuffer buffer);
     }
 }

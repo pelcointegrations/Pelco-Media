@@ -6,6 +6,12 @@
     public interface ISink
     {
         /// <summary>
+        /// Sets the upstream pipline link.  The upstream link is used to pass
+        /// events downstream.
+        /// </summary>
+        ISource UpstreamLink { set; }
+
+        /// <summary>
         /// Writes the buffer.
         /// </summary>
         /// <param name="stream">Buffer containing data</param>
@@ -17,5 +23,11 @@
         /// perform resource cleanup.
         /// </summary>
         void Stop();
+
+        /// <summary>
+        /// Pushes a media event downstream.
+        /// </summary>
+        /// <param name="e"></param>
+        void PushEvent(MediaEvent e);
     }
 }

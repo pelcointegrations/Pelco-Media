@@ -7,6 +7,9 @@ using System.Threading;
 
 namespace Pelco.Media.RTSP.Client
 {
+
+    public delegate void RtspResponseCallback(RtspResponse response);
+
     public class RtspClient : IDisposable
     {
         public static readonly int DEFAULT_RTSP_PORT = 554;
@@ -99,6 +102,54 @@ namespace Pelco.Media.RTSP.Client
             return _listener.GetChannelSource(channelId);
         }
 
+        /// <summary>
+        /// Asynchronously sends RTSP request.  Invokes callback if a response is received
+        /// from the server.
+        /// </summary>
+        /// <param name="request">The request to send</param>
+        /// <param name="callback">Callback to be called when a response is available</param>
+        public void SendAsync(RtspRequest request, RtspResponseCallback callback)
+        {
+            AsyncResponse asyncRes = null;
+            try
+            {
+                if (_authResponse != null && _credentials != null)
+                {
+                    // Set the authorization header if we have a cached auth response.
+                    request.Authorization = _authResponse.Generate(request.Method, request.URI);
+                }
+
+                asyncRes = DoSend(request, (res) =>
+                {
+                    var status = res.ResponseStatus;
+                    if (status.Is(RtspResponse.Status.Unauthorized) && _credentials != null)
+                    {
+                        _authResponse = AuthChallenge.Parse(_credentials, res.WWWAuthenticate);
+
+                        if (_authResponse != null)
+                        {
+                            LOG.Warn($"Received RTSP Unauthorized response re-trying with creds {_credentials.Username}:{_credentials.Password}");
+
+                            request.Authorization = _authResponse.Generate(request.Method, request.URI);
+                            asyncRes = DoSend(request, callback);
+                        }
+                    }
+                    else
+                    {
+                        callback.Invoke(res);
+                    }
+                });
+            }
+            catch (Exception e)
+            {
+                if (asyncRes != null)
+                {
+                    RemoveCallback(asyncRes.CSeq);
+                }
+                throw e;
+            }
+        }
+
         public RtspResponse Send(RtspRequest request, TimeSpan timeout)
         {
             AsyncResponse asyncRes = null;
@@ -110,7 +161,7 @@ namespace Pelco.Media.RTSP.Client
                     request.Authorization = _authResponse.Generate(request.Method, request.URI);
                 }
 
-                asyncRes = SendSync(request);
+                asyncRes = DoSend(request);
                 RtspResponse response = asyncRes.Get(timeout);
 
                 var status = response.ResponseStatus;
@@ -123,7 +174,8 @@ namespace Pelco.Media.RTSP.Client
                         LOG.Warn($"Received RTSP Unauthorized response re-trying with creds {_credentials.Username}:{_credentials.Password}");
 
                         request.Authorization = _authResponse.Generate(request.Method, request.URI);
-                        response = SendSync(request).Get(timeout);
+                        asyncRes = DoSend(request);
+                        response = asyncRes.Get(timeout);
                     }
                 }
 
@@ -131,23 +183,21 @@ namespace Pelco.Media.RTSP.Client
             }
             catch (Exception e)
             {
-                throw e;
-            }
-            finally
-            {
                 if (asyncRes != null)
                 {
                     RemoveCallback(asyncRes.CSeq);
                 }
+
+                throw e;
             }
         }
 
-        private AsyncResponse SendSync(RtspRequest request)
+        private AsyncResponse DoSend(RtspRequest request, RtspResponseCallback resCallback = null)
         {
             int cseq = GetNextCSeq();
             request.CSeq = _cseq;
 
-            AsyncResponse callback = new AsyncResponse(cseq);
+            AsyncResponse callback = new AsyncResponse(cseq, resCallback);
 
             if (!_connection.WriteMessage(request))
             {
@@ -205,7 +255,7 @@ namespace Pelco.Media.RTSP.Client
                 }
 
                 AsyncResponse cb = null;
-                if (_callbacks.TryGetValue(cseq, out cb))
+                if (_callbacks.TryRemove(cseq, out cb))
                 {
                     cb.HandleResponse(response);
                 }
@@ -230,12 +280,19 @@ namespace Pelco.Media.RTSP.Client
             private int _cseq;
             private ManualResetEvent _event;
             private RtspResponse _response;
+            private RtspResponseCallback _callback;
 
             public AsyncResponse(int cseq)
             {
                 _cseq = cseq;
                 _response = null;
+                _callback = null;
                 _event = new ManualResetEvent(false);
+            }
+
+            public AsyncResponse(int cseq, RtspResponseCallback callback) : this(cseq)
+            {
+                _callback = callback;
             }
 
             public int CSeq
@@ -270,8 +327,15 @@ namespace Pelco.Media.RTSP.Client
 
             public void HandleResponse(RtspResponse response)
             {
-                _response = response;
-                _event.Set();
+                if (_callback != null)
+                {
+                    _callback.Invoke(response);
+                }
+                else
+                {
+                    _response = response;
+                    _event.Set();
+                }
             }
 
             public void Dispose()

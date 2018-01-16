@@ -12,6 +12,12 @@
         ISink DownstreamLink { set; }
 
         /// <summary>
+        /// Sets the upstream pipline link.  The upstream link is used to pass
+        /// events downstream.
+        /// </summary>
+        ISource UpstreamLink { set; }
+
+        /// <summary>
         /// Gets and sets the flushing flag.  This flag is set when a pipeline state
         /// change occurs.  This allows sources to purge data from the previous state.
         /// </summary>
@@ -26,5 +32,12 @@
         /// Called before the pipeline destruction occurs.  Can be used to clean up resources.
         /// </summary>
         void Stop();
+
+        /// <summary>
+        /// Called when a media event is received.  A media event is an event sent upstream by
+        /// a transform or sink
+        /// </summary>
+        /// <param name="e"></param>
+        void OnMediaEvent(MediaEvent e);
     }
 }
