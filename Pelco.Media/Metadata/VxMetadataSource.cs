@@ -12,7 +12,7 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Timers;
 
-namespace Pelco.Metadata
+namespace Pelco.Media.Metadata
 {
     public class VxMetadataSource : IDisposable
     {

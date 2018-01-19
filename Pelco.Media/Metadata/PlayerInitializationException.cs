@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Pelco.Metadata
+namespace Pelco.Media.Metadata
 {
     public class PlayerInitializationException : Exception
     {

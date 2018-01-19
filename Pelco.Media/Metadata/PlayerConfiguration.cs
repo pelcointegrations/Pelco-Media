@@ -1,8 +1,9 @@
 ﻿
 using Pelco.Media.Common;
+using Pelco.Media.Metadata.Api;
 using System;
 
-namespace Pelco.Metadata
+namespace Pelco.Media.Metadata
 {
     /// <summary>
     /// Configuration used to initialize a <see cref="VxMetadataPlayer"/>

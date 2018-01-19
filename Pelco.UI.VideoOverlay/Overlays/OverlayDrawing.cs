@@ -1,6 +1,5 @@
-﻿using Pelco.Metadata;
+﻿using Pelco.Media.Metadata;
 using System;
-using System.Windows.Media;
 
 namespace Pelco.UI.VideoOverlay.Overlays
 {

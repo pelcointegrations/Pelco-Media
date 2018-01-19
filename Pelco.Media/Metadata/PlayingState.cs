@@ -1,4 +1,4 @@
-﻿namespace Pelco.Metadata
+﻿namespace Pelco.Media.Metadata
 {
     /// <summary>
     /// Defines the playing state.

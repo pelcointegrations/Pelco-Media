@@ -29,6 +29,8 @@ namespace Pelco.UI.VideoOverlay
             }
         }
 
+        public ISource UpstreamLink { set; get; }
+
         public FrameworkElement GetVisualOverlay()
         {
             return _canvas;
@@ -86,6 +88,11 @@ namespace Pelco.UI.VideoOverlay
         protected void ClearOverlays()
         {
             _viewModel.RemoveAllOverlays();
+        }
+
+        public void PushEvent(MediaEvent e)
+        {
+            UpstreamLink?.OnMediaEvent(e);
         }
     }
 }

@@ -85,10 +85,6 @@
       <Project>{d2dbcfad-a3e6-4850-a3fd-9160c150fa22}</Project>
       <Name>Pelco.Media</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Pelco.Metadata\Pelco.Metadata.csproj">
-      <Project>{8cbbcf33-ae8f-4337-b2dd-a06e053dc2e3}</Project>
-      <Name>Pelco.Metadata</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Page Include="VideoOverlayCanvas.xaml">

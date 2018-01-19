@@ -51,6 +51,17 @@
     <Compile Include="Common\Credentials.cs" />
     <Compile Include="Common\MimeType.cs" />
     <Compile Include="Common\NtpTime.cs" />
+    <Compile Include="Metadata\Api\IMetadataStream.cs" />
+    <Compile Include="Metadata\Api\IMetadataStreamManager.cs" />
+    <Compile Include="Metadata\Api\IPipelineCreator.cs" />
+    <Compile Include="Metadata\MetadataStreamBase.cs" />
+    <Compile Include="Metadata\MetadataStreamManagerBase.cs" />
+    <Compile Include="Metadata\PlayerConfiguration.cs" />
+    <Compile Include="Metadata\PlayerInitializationException.cs" />
+    <Compile Include="Metadata\PlayingState.cs" />
+    <Compile Include="Metadata\SynchronizedObject.cs" />
+    <Compile Include="Metadata\VxMetadataPlayer.cs" />
+    <Compile Include="Metadata\VxMetadataSource.cs" />
     <Compile Include="Pipeline\ByteBuffer.cs" />
     <Compile Include="Pipeline\BufferToObjectTypeTransformBase.cs" />
     <Compile Include="Pipeline\EndOfBufferException.cs" />

@@ -2,7 +2,7 @@
 using Pelco.Media.Pipeline.Transforms;
 using System;
 
-namespace Pelco.Metadata
+namespace Pelco.Media.Metadata
 {
     /// <summary>
     /// A MetadataPlayer is responsible for managing a <see cref="VxMetadataSource"/>, processing
