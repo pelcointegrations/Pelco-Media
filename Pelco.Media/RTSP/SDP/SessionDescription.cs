@@ -146,15 +146,15 @@ namespace Pelco.Media.RTSP.SDP
                         }
 
                     }
-                    else if (trimmed.StartsWith("o="))
+                    else if (Regex.IsMatch(trimmed, @"^o\s*=\s*."))
                     {
                         sdp.Origin = SessionOriginator.Parse(trimmed);
                     }
-                    else if (trimmed.StartsWith("s="))
+                    else if (Regex.IsMatch(trimmed, @"^s\s*=\s*."))
                     {
                         sdp.SessionName = ParseKeyValueLine(trimmed, "Session Name");
                     }
-                    else if (trimmed.StartsWith("i="))
+                    else if (Regex.IsMatch(trimmed, @"^i\s*=\s*."))
                     {
                         var info = ParseKeyValueLine(trimmed, "Session Information");
 
@@ -169,7 +169,7 @@ namespace Pelco.Media.RTSP.SDP
                             sdp.SessionInformation = info;
                         }
                     }
-                    else if (trimmed.StartsWith("u="))
+                    else if (Regex.IsMatch(trimmed, @"^u\s*=\s*."))
                     {
                         var value = ParseKeyValueLine(trimmed, "Session URI");
 
@@ -181,7 +181,7 @@ namespace Pelco.Media.RTSP.SDP
 
                         sdp.URI = uri;
                     }
-                    else if (trimmed.StartsWith("e="))
+                    else if (Regex.IsMatch(trimmed, @"^e\s*=\s*."))
                     {
                         sdp.Email = ParseKeyValueLine(trimmed, "Session Email");
                     }
@@ -189,7 +189,7 @@ namespace Pelco.Media.RTSP.SDP
                     {
                         sdp.PhoneNumber = ParseKeyValueLine(trimmed, "Session Phone Number");
                     }
-                    else if (trimmed.StartsWith("c="))
+                    else if (Regex.IsMatch(trimmed, @"^c\s*=\s*."))
                     {
                         var connection = ConnectionInfo.Parse(trimmed);
 
@@ -204,7 +204,7 @@ namespace Pelco.Media.RTSP.SDP
                             sdp.Connection = connection;
                         }
                     }
-                    else if (trimmed.StartsWith("b="))
+                    else if (Regex.IsMatch(trimmed, @"^b\s*=\s*."))
                     {
                         var bandwidth = BandwidthInfo.Parse(trimmed);
 
@@ -219,12 +219,12 @@ namespace Pelco.Media.RTSP.SDP
                             sdp.Bandwidths.Add(bandwidth);
                         }
                     }
-                    else if (trimmed.StartsWith("t="))
+                    else if (Regex.IsMatch(trimmed, @"^t\s*=\s*."))
                     {
                         currentTd = TimeDescription.Parse(trimmed);
                         sdp.TimeDescriptions.Add(currentTd);
                     }
-                    else if (trimmed.StartsWith("r="))
+                    else if (Regex.IsMatch(trimmed, @"^r\s*=\s*."))
                     {
                         if (currentTd != null)
                         {
@@ -233,11 +233,11 @@ namespace Pelco.Media.RTSP.SDP
 
                         // Just ignore the repeate time if no current time was defined.
                     }
-                    else if (trimmed.StartsWith("z="))
+                    else if (Regex.IsMatch(trimmed, @"^z\s*=\s*."))
                     {
                         sdp.TimeZone = TimeZone.Parse(trimmed);
                     }
-                    else if (trimmed.StartsWith("a="))
+                    else if (Regex.IsMatch(trimmed, @"^a\s*=\s*."))
                     {
                         if (currentMd != null)
                         {
@@ -250,7 +250,7 @@ namespace Pelco.Media.RTSP.SDP
                             sdp.Attributes.Add(Attribute.Parse(trimmed));
                         }
                     }
-                    else if (trimmed.StartsWith("m="))
+                    else if (Regex.IsMatch(trimmed, @"^m\s*=\s*."))
                     {
                         currentMd = MediaDescription.Parse(trimmed);
                         sdp.MediaDescriptions.Add(currentMd);

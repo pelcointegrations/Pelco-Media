@@ -92,7 +92,7 @@ namespace Pelco.Media.Metadata
                 {
                     var config = new PlayerConfiguration()
                     {
-                        PipelineCreator = _pipelineCreator,
+                        PipelineCreator = GetPipelineCreator(),
                         TypeFilter = _filter,
                         Uri = dataEndpoint
                     };

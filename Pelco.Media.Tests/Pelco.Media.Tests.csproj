@@ -65,6 +65,7 @@
     <Compile Include="RSTP\TransportHeaderTests.cs" />
     <Compile Include="RTP\OnvifRtpHeaderTests.cs" />
     <Compile Include="RTP\RtpPacketTests.cs" />
+    <Compile Include="SDP\SessionDescriptionTests.cs" />
     <Compile Include="Utils\NetworkUtil.cs" />
     <Compile Include="Utils\TestRequestHandler.cs" />
   </ItemGroup>

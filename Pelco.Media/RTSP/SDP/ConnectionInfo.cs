@@ -46,6 +46,7 @@ namespace Pelco.Media.RTSP.SDP
             }
 
             var builder = ConnectionInfo.CreateBuilder()
+                                        .NetType(NetworkType.IN)
                                         .AddrType((AddressType)Enum.Parse(typeof(AddressType), match.Groups[1].Value));
 
             var connectionAddr = match.Groups[2].Value;

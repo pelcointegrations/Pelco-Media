@@ -27,7 +27,7 @@ namespace Pelco.Media.RTSP.SDP
     public class MediaDescription
     {
         private static readonly string CRLF = "\r\n";
-        private static readonly Regex REGEX = new Regex(@"^m\s*=\s*(audio|video|text|application|message)\s+(\d+)\s+(udp|RTP/AVP|RTP/SAVP)\s+(.+)", RegexOptions.Compiled);
+        private static readonly Regex REGEX = new Regex(@"^m\s*=\s*(audio|video|text|application|message)\s+(\d+)\s+(udp|RTP\s*/\s*AVP|RTP\s*/\s*SAVP)\s+(.+)", RegexOptions.Compiled);
 
         public MediaDescription()
         {
@@ -160,7 +160,7 @@ namespace Pelco.Media.RTSP.SDP
 
         private static TransportProtocol ToTransportProtocol(string str)
         {
-            switch (str)
+            switch (Regex.Replace(str, @"\s+", ""))
             {
                 case "udp"     : return TransportProtocol.UDP;
                 case "RTP/AVP" : return TransportProtocol.RTP_AVP;
