@@ -8,29 +8,41 @@ namespace Pelco.Media.Tests.Integrations
 {
     public class RtspCommunicationFixture : IDisposable
     {
-        private static readonly string URI_PATH = "/test";
-
         private int _cseq;
+        private string _path;
         private RtspServer _server;
 
         public RtspCommunicationFixture()
         {
-            ServerPort = NetworkUnil.FindAvailableTcpPort();
-
-            var dispatcher = new DefaultRequestDispatcher();
-            dispatcher.RegisterHandler(URI_PATH, new TestRequestHandler());
-
-            _server = new RtspServer(ServerPort, dispatcher);
-            _server.Start();
-
-            // Wait until the serer port is not available.
-            while (NetworkUnil.IsTcpPortAvailable(ServerPort))
-            {
-                Thread.Sleep(1000);
-            }
-
-            Client = new RtspClient(ServerUriEndpoint);
+            Initialized = false;
         }
+
+        public void Initialize(string path, IRequestHandler handler)
+        {
+            if (!Initialized)
+            {
+                ServerPort = NetworkUnil.FindAvailableTcpPort();
+
+                var dispatcher = new DefaultRequestDispatcher();
+                dispatcher.RegisterHandler(path, handler);
+
+                _path = path;
+                _server = new RtspServer(ServerPort, dispatcher);
+                _server.Start();
+
+                // Wait until the serer port is not available.
+                while (NetworkUnil.IsTcpPortAvailable(ServerPort))
+                {
+                    Thread.Sleep(1000);
+                }
+
+                Client = new RtspClient(ServerUriEndpoint);
+
+                Initialized = true;
+            }
+        }
+
+        public bool Initialized { get; private set; }
 
         public RtspClient Client { get; private set; }
 
@@ -40,7 +52,7 @@ namespace Pelco.Media.Tests.Integrations
         {
             get
             {
-                return new Uri($"rtsp://127.0.0.1:{ServerPort}{URI_PATH}");
+                return new Uri($"rtsp://127.0.0.1:{ServerPort}{_path}");
             }
         }
 
@@ -51,8 +63,8 @@ namespace Pelco.Media.Tests.Integrations
 
         public void Dispose()
         {
-            _server.Stop();
-            Client.Close();
+            _server?.Stop();
+            Client?.Close();
         }
     }
 }

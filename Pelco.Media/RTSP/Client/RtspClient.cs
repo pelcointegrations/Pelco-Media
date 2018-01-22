@@ -29,12 +29,7 @@ namespace Pelco.Media.RTSP.Client
 
         public RtspClient(Uri uri, Credentials creds = null)
         {
-            if (uri == null)
-            {
-                throw new ArgumentNullException("Cannot create RTSP client from null uri");
-            }
-
-            _uri = uri;
+            _uri = uri ?? throw new ArgumentNullException("Cannot create RTSP client from null uri");
             _cseq = 0;
             _credentials = creds;
             _defaultTimeout = TimeSpan.FromSeconds(20);
@@ -76,15 +71,20 @@ namespace Pelco.Media.RTSP.Client
 
         public void Dispose()
         {
-            LOG.Info($"Disposing RTSP client connected to '{_connection.Endpoint}'");
-
-            _listener.Stop();
-
-            foreach (var cb in _callbacks)
+            if (_listener != null)
             {
-                cb.Value.Dispose();
+                LOG.Info($"Disposing RTSP client connected to '{_connection.Endpoint}'");
+
+                _listener.Stop();
+
+                foreach (var cb in _callbacks)
+                {
+                    cb.Value.Dispose();
+                }
+                _callbacks.Clear();
+
+                _listener = null;
             }
-            _callbacks.Clear();
         }
 
         public RtspResponse Send(RtspRequest request)

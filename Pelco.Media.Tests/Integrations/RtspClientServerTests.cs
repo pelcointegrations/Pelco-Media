@@ -4,13 +4,16 @@ using Xunit;
 
 namespace Pelco.Media.Tests.Integrations
 {
-    public class RtspClientServerTests : IClassFixture<RtspCommunicationFixture> 
+    public class RtspClientServerTests : IClassFixture<RtspCommunicationFixture>
     {
+        private static readonly string URI_PATH = "/test";
+
         private RtspCommunicationFixture _fixture;
 
         public RtspClientServerTests(RtspCommunicationFixture fixture)
         {
             _fixture = fixture;
+            _fixture.Initialize(URI_PATH, new TestRequestHandler());
         }
 
         [Fact]
@@ -28,7 +31,7 @@ namespace Pelco.Media.Tests.Integrations
 
             Assert.True(response.ResponseStatus.Is(RtspResponse.Status.Ok));
             Assert.Equal(cseq.ToString(), response.Headers[RtspHeaders.Names.CSEQ]);
-            Assert.Equal("OPTIONS, DESCRIBE, GET_PARAMATER, SETUP, PLAY, TEARDOWN", response.Headers[RtspHeaders.Names.PUBLIC]);
+            Assert.Equal("OPTIONS, DESCRIBE, GET_PARAMETER, SETUP, PLAY, TEARDOWN", response.Headers[RtspHeaders.Names.PUBLIC]);
         }
 
         [Fact]
