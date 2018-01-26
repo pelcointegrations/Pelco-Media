@@ -25,14 +25,12 @@ namespace Pelco.Media.RTSP
         private LineReader _lineReader;
         private IPEndPoint _remoteEndpoint;
         private InterleavedData _interleavedPacket;
-        private BlockingCollection<ByteBuffer> _rtpQueue;
 
-        public RtspMessageDecoder(BlockingCollection<ByteBuffer> rtpQueue, IPEndPoint remoteEndpoint)
+        public RtspMessageDecoder(IPEndPoint remoteEndpoint)
         {
             _message = null;
             _chunkSize = 0;
             _bufferIdx = 0;
-            _rtpQueue = rtpQueue;
             _interleavedPacket = null;
             _remoteEndpoint = remoteEndpoint;
             _lineReader = new LineReader();
@@ -45,8 +43,10 @@ namespace Pelco.Media.RTSP
         /// </summary>
         public event EventHandler<RtspMessageEventArgs> RtspMessageReceived;
 
-        public void Decode(MemoryStream stream)
+        public bool Decode(MemoryStream stream, out RtspChunk chunk)
         {
+            chunk = null;
+
             using (var reader = new BinaryReader(stream, Encoding.UTF8, true))
             {
                 switch (_state)
@@ -63,7 +63,7 @@ namespace Pelco.Media.RTSP
                             if (currentChar == INTERLEAVED_MARKER)
                             {
                                 _state = ReadingState.ReadInterleavedData;
-                                return;
+                                return false;
                             }
                             else
                             {
@@ -76,7 +76,7 @@ namespace Pelco.Media.RTSP
                                         // This is an invalid initial line just ignore it.
                                         LOG.Warn($"Invalid start of RTSP message: '{line}', ignoring...");
                                         _state = ReadingState.SkipControlChars;
-                                        return;
+                                        return false;
                                     }
                                     else
                                     {
@@ -106,8 +106,10 @@ namespace Pelco.Media.RTSP
                                 // No content data expected.
                                 // TODO(frank.lamar):  Add support for chunking.  Not important
                                 // at the moment because I have yet to see a device use chunking.
-                                RtspMessageReceived?.Invoke(this, new RtspMessageEventArgs(_message));
+                                chunk = _message;
                                 Reset();
+
+                                return true;
                             }
 
                             break;
@@ -127,8 +129,10 @@ namespace Pelco.Media.RTSP
 
                             if (_chunkSize == 0)
                             {
-                                RtspMessageReceived?.Invoke(this, new RtspMessageEventArgs(_message));
+                                chunk = _message;
                                 Reset();
+
+                                return true;
                             }
 
                             break;
@@ -143,20 +147,19 @@ namespace Pelco.Media.RTSP
                                 _chunkSize = GetUint16(reader);
 
                                 _interleavedPacket = new InterleavedData(channel);
-                                _interleavedPacket.Data = new byte[_chunkSize];
+                                _interleavedPacket.Payload = new byte[_chunkSize];
                             }
 
-                            int bytesRead = reader.Read(_interleavedPacket.Data, _bufferIdx, _chunkSize);
+                            int bytesRead = reader.Read(_interleavedPacket.Payload, _bufferIdx, _chunkSize);
                             _chunkSize -= bytesRead; // Decrement the bytes read from the chunk size.
                             _bufferIdx += bytesRead; // Increment the index to write next chunk to. 
 
                             if (_chunkSize == 0)
                             {
-                                var buffer = new Pipeline.ByteBuffer(_interleavedPacket.Data, 0, _interleavedPacket.Data.Length, true);
-                                buffer.Channel = _interleavedPacket.Channel;
-
-                                _rtpQueue.Add(buffer);
+                                chunk = _interleavedPacket;                                
                                 Reset();
+
+                                return true;
                             }
 
                             break;
@@ -178,6 +181,8 @@ namespace Pelco.Media.RTSP
                         }
                 }
             }
+
+            return false;
         }
 
         public ushort GetUint16(BinaryReader reader)

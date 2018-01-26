@@ -65,6 +65,7 @@
     <Compile Include="Pipeline\ByteBuffer.cs" />
     <Compile Include="Pipeline\BufferToObjectTypeTransformBase.cs" />
     <Compile Include="Pipeline\EndOfBufferException.cs" />
+    <Compile Include="Pipeline\InboundObjectHandler.cs" />
     <Compile Include="Pipeline\IObjectTypeSink.cs" />
     <Compile Include="Pipeline\ISink.cs" />
     <Compile Include="Pipeline\ISource.cs" />
@@ -96,6 +97,7 @@
     <Compile Include="RTSP\Client\BasicAuthChallengeResponse.cs" />
     <Compile Include="RTSP\Client\ChallengeResponse.cs" />
     <Compile Include="RTSP\Client\DigestAuthChallengeResponse.cs" />
+    <Compile Include="RTSP\Client\IRtspInvoker.cs" />
     <Compile Include="RTSP\Client\MediaTrack.cs" />
     <Compile Include="RTSP\Client\MediaTracks.cs" />
     <Compile Include="RTSP\Client\RtspClient.cs" />
@@ -104,6 +106,7 @@
     <Compile Include="RTSP\IRtspConnection.cs" />
     <Compile Include="RTSP\PlaybackBufferStateEvent.cs" />
     <Compile Include="RTSP\RtpInterleavedMediaSource.cs" />
+    <Compile Include="RTSP\RtspChunk.cs" />
     <Compile Include="RTSP\RtspException.cs" />
     <Compile Include="RTSP\RtspHeaders.cs" />
     <Compile Include="RTSP\RtspListener.cs" />

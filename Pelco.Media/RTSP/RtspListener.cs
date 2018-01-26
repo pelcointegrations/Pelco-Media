@@ -1,13 +1,19 @@
 ﻿using NLog;
-using Pelco.Media.Pipeline;
 using System;
-using System.Collections.Concurrent;
 using System.IO;
 using System.Net.Sockets;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Pelco.Media.RTSP
 {
+    /// <summary>
+    /// Callback delegate for handling <see cref="RtspChunk"/>s.
+    /// Rtsp chunks are either interleaved data or Rtsp request/responses.
+    /// </summary>
+    /// <param name="chunk">The chunk to handle</param>
+    public delegate void RtspChunkHandler(RtspChunk chunk);
+
     /// <summary>
     /// RTSP Listener.  A listener is used to listen for requests/responses
     /// from an RTSP transport.
@@ -21,32 +27,13 @@ namespace Pelco.Media.RTSP
         private bool _started;
         private RtspMessageDecoder _decoder;
         private IRtspConnection _connection;
-        private BlockingCollection<ByteBuffer> _rtpQueue;
-        private ConcurrentDictionary<int, RtpInterleaveMediaSource> _sources;
+        private RtspChunkHandler _chunkHandler;
 
-        public RtspListener(IRtspConnection connection)
+        public RtspListener(IRtspConnection connection, RtspChunkHandler handler)
         {
-            _connection = connection ?? throw new ArgumentNullException("Transport cannot be null");
-            _rtpQueue = new BlockingCollection<ByteBuffer>();
-            _decoder = new RtspMessageDecoder(_rtpQueue, _connection.Endpoint);
-            _sources = new ConcurrentDictionary<int, RtpInterleaveMediaSource>();
-        }
-
-        /// <summary>
-        /// Event handler for receiving <see cref="RtspMessage"/>s. Rtsp messages
-        /// are either <see cref="RtspRequest"/>s or <see cref="RtspResponse"/>s. 
-        /// </summary>
-        public event EventHandler<RtspMessageEventArgs> RtspMessageReceived
-        {
-            add
-            {
-                _decoder.RtspMessageReceived += value;
-            }
-
-            remove
-            {
-                _decoder.RtspMessageReceived -= value;
-            }
+            _connection = connection ?? throw new ArgumentNullException("Connection cannot be null");
+            _chunkHandler = handler ?? throw new ArgumentNullException("Handler cannot be null");
+            _decoder = new RtspMessageDecoder(_connection.Endpoint);
         }
 
         /// <summary>
@@ -62,8 +49,7 @@ namespace Pelco.Media.RTSP
                     return;
                 }
 
-                ThreadPool.QueueUserWorkItem(ListenForRequests);
-                ThreadPool.QueueUserWorkItem(ProcessInterleavedData);
+                Task.Run(() => ListenForRequests());
 
                 _started = true;
             }
@@ -75,9 +61,6 @@ namespace Pelco.Media.RTSP
         /// <param name="closeConnection">Flag indicating if the connection should be closed as well.</param>
         public void Stop(bool closeConnection = true)
         {
-            _sources.Clear();
-            _rtpQueue.Dispose(); // Shutsdowns the InterleavedProcessing thread
-
             if (closeConnection && _connection.IsConnected)
             {
                 _connection.Close();
@@ -97,26 +80,7 @@ namespace Pelco.Media.RTSP
 
             _connection.Reconnect();
 
-            ThreadPool.QueueUserWorkItem(ListenForRequests);
-        }
-
-        /// <summary>
-        /// Retrieves a <see cref="ISource"/> used for receiving data associated with the
-        /// interleaved channel.  If a source does not exist then one is created.
-        /// </summary>
-        /// <param name="channel">The channel id of interest</param>
-        /// <returns></returns>
-        public RtpInterleaveMediaSource GetChannelSource(int channel)
-        {
-            if (!_sources.ContainsKey(channel))
-            {
-                var source = new RtpInterleaveMediaSource(channel);
-                _sources[channel] = source;
-
-                return source;
-            }
-
-            return _sources[channel];
+            Task.Run(() => ListenForRequests());
         }
 
         public void SendResponse(RtspResponse response)
@@ -127,49 +91,7 @@ namespace Pelco.Media.RTSP
             }
         }
 
-        private void ProcessInterleavedData(object state)
-        {
-            try
-            {
-                LOG.Info($"Starting RTP/RTCP processing thread '{Thread.CurrentThread.ManagedThreadId}' for '{_connection.Endpoint}'");
-
-                while (true)
-                {
-                    var buffer = _rtpQueue.Take();
-                    if (_sources.ContainsKey(buffer.Channel))
-                    {
-                        var channel = buffer.Channel;
-                        try
-                        {
-                            // Write the buffer to the correct source.
-                            _sources[channel].WriteBuffer(buffer);
-                        }
-                        catch (Exception e)
-                        {
-                            LOG.Error(e, $"Unable to process interleaved data for channel {buffer.Channel}.");
-                        }
-                    }
-                }
-            }
-            catch (ObjectDisposedException)
-            {
-                LOG.Debug("Interleaved processing queue disposed, exiting RTP/RTCP processing thread.");
-            }
-            catch (InvalidOperationException e)
-            {
-                // This will only occur if the queue is marked for add complete, or the underlying
-                // collection was modified outside the scope of the BlockingCollection.
-                LOG.Error(e, $"Unable to retrieve RTP/RTCP interleaved data, queue was improperly modified.");
-            }
-            catch (Exception e)
-            {
-                LOG.Error(e, "Received unexpected exception while processing RTP/RTCP interleaved packet");
-            }
-
-            LOG.Info($"Exiting RTSP/RTP interleaved processing thread({Thread.CurrentThread.ManagedThreadId}) for '{_connection.Endpoint}'");
-        }
-
-        private void ListenForRequests(object state)
+        private void ListenForRequests()
         {
             byte[] readBuffer = new byte[4096];
 
@@ -212,7 +134,11 @@ namespace Pelco.Media.RTSP
             {
                 try
                 {
-                    _decoder.Decode(stream);
+                    RtspChunk chunk = null;
+                    if (_decoder.Decode(stream, out chunk))
+                    {
+                        _chunkHandler?.Invoke(chunk);
+                    }
                 }
                 catch (Exception e)
                 {

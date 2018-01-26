@@ -66,7 +66,6 @@ namespace Pelco.Media.RTSP.Server
                     {
                         try
                         {
-                            entry.Value.RtspMessageReceived -= Listener_RtspMessageReceived;
                             entry.Value.Stop();
                         }
                         catch (Exception e)
@@ -89,11 +88,10 @@ namespace Pelco.Media.RTSP.Server
                 {
                     var client = _listener.AcceptTcpClient();
                     var conn = new RtspConnection(client);
-                    var listener = new RtspListener(conn);
+                    var listener = new RtspListener(conn, OnRtspRequest);
 
                     LOG.Debug($"Accepted client connection from '{conn.RemoteAddress}'");
 
-                    listener.RtspMessageReceived += Listener_RtspMessageReceived;
                     listener.Start();
 
                     _listeners.Add(conn.RemoteAddress, listener);
@@ -105,9 +103,12 @@ namespace Pelco.Media.RTSP.Server
             }
         }
 
-        private void Listener_RtspMessageReceived(object sender, RtspMessageEventArgs e)
+        private void OnRtspRequest(RtspChunk chunk)
         {
-            _messages.Add(e.Message);
+            if (chunk is RtspMessage)
+            {
+                _messages.Add(chunk as RtspMessage);
+            }
         }
 
         private void ProcessMessages(object state)

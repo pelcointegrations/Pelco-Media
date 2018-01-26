@@ -6,7 +6,7 @@ namespace Pelco.Media.RTSP
     /// Represents an interleaved RTP/RTCP packet.  Users can retrieve the packet's data as well
     /// as the packets associated channel.
     /// </summary>
-    public class InterleavedData : ICloneable
+    public class InterleavedData : RtspChunk, ICloneable
     {
         public InterleavedData(ushort channel)
         {
@@ -22,7 +22,18 @@ namespace Pelco.Media.RTSP
         /// <summary>
         /// Holds the Interleaved packets RTP/RTCP data.
         /// </summary>
-        public byte[] Data { get; internal set; }
+        public byte[] Payload
+        {
+            get
+            {
+                return Data;
+            }
+
+            internal set
+            {
+                Data = value;
+            }
+        }
 
         /// <summary>
         /// <see cref="RtspDataChunk.Clone"/>

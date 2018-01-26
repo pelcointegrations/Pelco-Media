@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 
 namespace Pelco.Media.RTSP
 {
-    public class RtspMessage : ICloneable
+    public class RtspMessage : RtspChunk, ICloneable
     {
         protected static readonly string CRLF = "\r\n";
 
@@ -94,7 +94,18 @@ namespace Pelco.Media.RTSP
         /// <summary>
         /// Gets the RTSP message's entity body.
         /// </summary>
-        public byte[] Body { get; internal set; }
+        public byte[] Body
+        {
+            get
+            {
+                return Data;
+            }
+
+            internal set
+            {
+                Data = value;
+            }
+        }
 
         public int CSeq
         {
