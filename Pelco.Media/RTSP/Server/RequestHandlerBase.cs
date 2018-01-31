@@ -3,7 +3,7 @@
     /// <summary>
     /// Base <see cref="IRequestHandler"/> for handling RTSP requests.
     /// </summary>
-    public abstract class BaseRequestHandler : IRequestHandler
+    public abstract class RequestHandlerBase : IRequestHandler
     {
         public abstract RtspResponse Describe(RtspRequest request);
 

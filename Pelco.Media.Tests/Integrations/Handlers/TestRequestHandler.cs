@@ -2,9 +2,9 @@
 using Pelco.Media.RTSP;
 using Pelco.Media.RTSP.SDP;
 
-namespace Pelco.Media.Tests.Utils
+namespace Pelco.Media.Tests.Integrations.Handlers
 {
-    class TestRequestHandler : BaseRequestHandler
+    class TestRequestHandler : RequestHandlerBase
     {
         public const string CALLED_METHOD_HEADER = "Called-Method";
 

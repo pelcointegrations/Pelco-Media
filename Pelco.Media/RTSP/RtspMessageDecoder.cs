@@ -2,6 +2,7 @@
 using Pelco.Media.Pipeline;
 using System;
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Text;
@@ -36,12 +37,6 @@ namespace Pelco.Media.RTSP
             _lineReader = new LineReader();
             _state = ReadingState.SkipControlChars;
         }
-        
-        /// <summary>
-        /// Event handler for receiving <see cref="RtspMessage"/>s. Rtsp messages
-        /// are either <see cref="RtspRequest"/>s or <see cref="RtspResponse"/>s. 
-        /// </summary>
-        public event EventHandler<RtspMessageEventArgs> RtspMessageReceived;
 
         public bool Decode(MemoryStream stream, out RtspChunk chunk)
         {

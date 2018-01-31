@@ -12,7 +12,9 @@ namespace Pelco.Media.RTSP
     /// </summary>
     public class RtspConnection : IRtspConnection, IDisposable
     {
-        private static Logger LOG = LogManager.GetCurrentClassLogger();
+        private static readonly Logger LOG = LogManager.GetCurrentClassLogger();
+
+        private readonly object WriteLock = new object();
 
         private Stream _stream;
         private IPEndPoint _endpoint;
@@ -139,7 +141,17 @@ namespace Pelco.Media.RTSP
         {
             CheckAndAttemptReconnect();
 
-            _stream.WriteByte(value);
+            lock (WriteLock)
+            {
+                try
+                {
+                    _stream.WriteByte(value);
+                }
+                catch (Exception e)
+                {
+                    LOG.Error(e, $"Failed to write to connection stream, reason: {e.Message}");
+                }
+            }
         }
 
         /// <summary>
@@ -149,7 +161,17 @@ namespace Pelco.Media.RTSP
         {
             CheckAndAttemptReconnect();
 
-            _stream.Write(buffer, offset, size);
+            lock (WriteLock)
+            {
+                try
+                {
+                    _stream.Write(buffer, offset, size);
+                }
+                catch (Exception e)
+                {
+                    LOG.Error(e, $"Failed to write to connection stream, reason: {e.Message}");
+                }
+            }
         }
 
         /// <summary>

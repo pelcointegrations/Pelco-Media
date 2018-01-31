@@ -207,6 +207,8 @@ namespace Pelco.Media.Pipeline
 
         public object UserData { get; set; }
 
+        public bool IsDamaged { get; set; }
+
         #endregion
 
         public string ToString(Encoding encoding)

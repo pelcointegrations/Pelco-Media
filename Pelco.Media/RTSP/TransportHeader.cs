@@ -10,15 +10,15 @@ namespace Pelco.Media.RTSP
         private static readonly Logger LOG = LogManager.GetCurrentClassLogger();
 
         internal TransportHeader(TransportType type,
-                                     string ssrc,
-                                     int ttl,
-                                     string source,
-                                     string destination,
-                                     PortPair clientPorts,
-                                     PortPair serverPorts,
-                                     PortPair multicastPorts,
-                                     PortPair interleavedChannels,
-                                     ImmutableList<string> extras)
+                                 string ssrc,
+                                 int ttl,
+                                 string source,
+                                 string destination,
+                                 PortPair clientPorts,
+                                 PortPair serverPorts,
+                                 PortPair multicastPorts,
+                                 PortPair interleavedChannels,
+                                 ImmutableList<string> extras)
         {
             Type = type;
             SSRC = ssrc;

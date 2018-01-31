@@ -40,10 +40,19 @@ namespace Pelco.Media.RTSP.Server
         bool RefreshSession(string sessionId);
 
         /// <summary>
-        /// 
+        /// Tearsdown an existing session.
         /// </summary>
         /// <param name="sessionId"></param>
         /// <returns></returns>
         bool TearDownSession(string sessionId);
+
+        /// <summary>
+        /// Retrieves a list dictionary of session properties. This method
+        /// can usually be used to retrieve session information.  Usually
+        /// when making a GET_PARAMETER call.
+        /// </summary>
+        /// <param name="sessionId"></param>
+        /// <returns>A dictionary of key/value pairs.</returns>
+        Dictionary<string, object> GetSessionProperties(string sessionId);
     }
 }

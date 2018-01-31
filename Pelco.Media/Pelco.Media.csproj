@@ -82,9 +82,13 @@
     <Compile Include="Pipeline\TransformBase.cs" />
     <Compile Include="Pipeline\ObjectTypeTransformBase.cs" />
     <Compile Include="Pipeline\Transforms\BufferToRtpPacketTransform.cs" />
+    <Compile Include="Pipeline\Transforms\IRtpDemarcator.cs" />
+    <Compile Include="Pipeline\Transforms\MarkerDemarcator.cs" />
+    <Compile Include="Pipeline\Transforms\RtpDepacketizer.cs" />
     <Compile Include="Pipeline\Transforms\RtpPacketizer.cs" />
     <Compile Include="Pipeline\Transforms\RtpPayloadTransform.cs" />
     <Compile Include="Pipeline\Transforms\SsrcFilter.cs" />
+    <Compile Include="Pipeline\Transforms\TimestampDemarcator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RTP\IRtpSource.cs" />
     <Compile Include="RTP\OnvifRtpHeader.cs" />
@@ -105,6 +109,7 @@
     <Compile Include="RTSP\InterleavedData.cs" />
     <Compile Include="RTSP\IRtspConnection.cs" />
     <Compile Include="RTSP\PlaybackBufferStateEvent.cs" />
+    <Compile Include="RTSP\RequestContext.cs" />
     <Compile Include="RTSP\RtpInterleavedMediaSource.cs" />
     <Compile Include="RTSP\RtspChunk.cs" />
     <Compile Include="RTSP\RtspException.cs" />
@@ -130,7 +135,7 @@
     <Compile Include="RTSP\SDP\SdpParseException.cs" />
     <Compile Include="RTSP\SDP\TimeDescription.cs" />
     <Compile Include="RTSP\SDP\TimeZone.cs" />
-    <Compile Include="RTSP\Server\BaseRequestHandler.cs" />
+    <Compile Include="RTSP\Server\RequestHandlerBase.cs" />
     <Compile Include="RTSP\Server\DefaultRequestDispatcher.cs" />
     <Compile Include="RTSP\Server\IRequestDispatcher.cs" />
     <Compile Include="RTSP\Server\IRequestHandler.cs" />

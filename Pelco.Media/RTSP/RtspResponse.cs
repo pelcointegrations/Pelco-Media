@@ -143,7 +143,7 @@ namespace Pelco.Media.RTSP
         public Status ResponseStatus { get; private set; }
 
         /// <summary>
-        /// Gets and sets the RTSP WWW-Authenticate headers.
+        /// Gets and sets the RTSP WWW-Authenticate header.
         /// </summary>
         public string WWWAuthenticate
         {
@@ -157,6 +157,19 @@ namespace Pelco.Media.RTSP
             set
             {
                 Headers[RtspHeaders.Names.WWW_AUTHENTICATE] = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets the RTSP Session header.
+        /// </summary>
+        public Session Session
+        {
+            get
+            {
+                return Headers.ContainsKey(RtspHeaders.Names.SESSION)
+                            ? Session.Parse(Headers[RtspHeaders.Names.SESSION])
+                            : null;
             }
         }
 

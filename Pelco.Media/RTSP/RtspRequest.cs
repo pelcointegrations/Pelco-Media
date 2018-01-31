@@ -54,6 +54,12 @@ namespace Pelco.Media.RTSP
         public RtspMethod Method { get; private set; }
 
         /// <summary>
+        /// The RTSP request context.  Only made available when
+        /// receiving a request to an RTSP server instance.
+        /// </summary>
+        public RequestContext Context { get; internal set; }
+
+        /// <summary>
         /// Gets and sets the RTSP Authorization header.
         /// </summary>
         public string Authorization
@@ -66,6 +72,17 @@ namespace Pelco.Media.RTSP
             set
             {
                 Headers[RtspHeaders.Names.AUTHORIZATION] = value; 
+            }
+        }
+
+        /// <summary>
+        /// Gets the RTSP Session header.
+        /// </summary>
+        public string Session
+        {
+            get
+            {
+                return Headers.ContainsKey(RtspHeaders.Names.SESSION) ? Headers[RtspHeaders.Names.SESSION] : null;
             }
         }
 
@@ -99,7 +116,7 @@ namespace Pelco.Media.RTSP
         public sealed class Builder
         {
             private Uri _uri;
-            private RtspRequest.RtspMethod _method;
+            private RtspMethod _method;
             private Dictionary<string, string> _headers;
 
             public Builder()

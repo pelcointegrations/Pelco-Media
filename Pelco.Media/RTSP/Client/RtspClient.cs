@@ -6,6 +6,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Net;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Pelco.Media.RTSP.Client
 {
@@ -44,6 +45,8 @@ namespace Pelco.Media.RTSP.Client
             _rtpQueue = new BlockingCollection<ByteBuffer>();
 
             LOG.Info($"Created RTSP client for '{_connection.Endpoint}'");
+
+            Task.Run(() => ProcessInterleavedData());
 
             _listener.Start();
         }
@@ -314,7 +317,7 @@ namespace Pelco.Media.RTSP.Client
             }
         }
 
-        private void ProcessInterleavedData(object state)
+        private void ProcessInterleavedData()
         {
             try
             {

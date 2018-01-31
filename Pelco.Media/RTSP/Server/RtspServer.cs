@@ -145,6 +145,7 @@ namespace Pelco.Media.RTSP.Server
                     try
                     {
                         int receivedCseq = request.CSeq;
+                        request.Context = new RequestContext(listener);
                         var response = _dispatcher.Dispatch(request);
 
                         if (response != null)

@@ -462,19 +462,13 @@ namespace Pelco.Media.Metadata
             {
                 LOG.Debug($"Tearing RTSP session '{session.ID}' at '{session.Track.ControlUri}'");
 
-                // TODO(frank.lamar): Use async request when support is added to the client.
-                _client.SendAsync(RtspRequest.CreateBuilder()
-                                             .Uri(_currentUri)
-                                             .Method(RtspRequest.RtspMethod.TEARDOWN)
-                                             .AddHeader(RtspHeaders.Names.SESSION, session.ID)
-                                             .Build(),
-                                  (res) =>
-                                  {
-                                      if (res.ResponseStatus.Code >= RtspResponse.Status.BadRequest.Code)
-                                      {
-                                          LOG.Error($"Failed to teardown session '{session.ID}' received {res.ResponseStatus}");
-                                      }
-                                  });
+                _client.Request().Session(session.ID).TeardownAsync((res) =>
+                {
+                    if (res.ResponseStatus.Code >= RtspResponse.Status.BadRequest.Code)
+                    {
+                        LOG.Error($"Failed to teardown session '{session.ID}' received {res.ResponseStatus}");
+                    }
+                });
             }
             catch (Exception e)
             {
@@ -541,18 +535,13 @@ namespace Pelco.Media.Metadata
 
                     try
                     {
-                        _client.SendAsync(RtspRequest.CreateBuilder()
-                                                     .Uri(_currentUri)
-                                                     .Method(RtspRequest.RtspMethod.GET_PARAMETER)
-                                                     .AddHeader(RtspHeaders.Names.SESSION, sessionId)
-                                                     .Build(),
-                                          (res) =>
-                                          {
-                                              if (res.ResponseStatus.Code >= RtspResponse.Status.BadRequest.Code)
-                                              {
-                                                  LOG.Error($"Failed to refresh session '{sessionId}' received {res.ResponseStatus}");
-                                              }
-                                          });
+                        _client.Request().Session(sessionId).GetParameterAsync((res) =>
+                        {
+                            if (res.ResponseStatus.Code >= RtspResponse.Status.BadRequest.Code)
+                            {
+                                LOG.Error($"Failed to refresh session '{sessionId}' received {res.ResponseStatus}");
+                            }
+                        });
                     }
                     catch (Exception ex)
                     {

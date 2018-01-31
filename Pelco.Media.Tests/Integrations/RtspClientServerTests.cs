@@ -1,5 +1,5 @@
 ﻿using Pelco.Media.RTSP;
-using Pelco.Media.Tests.Utils;
+using Pelco.Media.Tests.Integrations.Handlers;
 using System.Threading;
 using Xunit;
 

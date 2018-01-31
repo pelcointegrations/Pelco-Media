@@ -1,6 +1,8 @@
 ﻿using NLog;
 using System;
+using System.Diagnostics;
 using System.IO;
+using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
@@ -34,6 +36,17 @@ namespace Pelco.Media.RTSP
             _connection = connection ?? throw new ArgumentNullException("Connection cannot be null");
             _chunkHandler = handler ?? throw new ArgumentNullException("Handler cannot be null");
             _decoder = new RtspMessageDecoder(_connection.Endpoint);
+        }
+
+        /// <summary>
+        /// Get's the underlying connection's IP endpoint.
+        /// </summary>
+        public IPEndPoint Endpoint
+        {
+            get
+            {
+                return _connection.Endpoint;
+            }
         }
 
         /// <summary>
@@ -89,6 +102,21 @@ namespace Pelco.Media.RTSP
             {
                 LOG.Error($"Failed to write response to client at {_connection.RemoteAddress} \n{response}");
             }
+        }
+
+        public bool Write(byte[] data)
+        {
+            try
+            {
+                _connection.Write(data, 0, data.Length);
+                return true;
+            }
+            catch (Exception e)
+            {
+                LOG.Error($"Failed to write data to connection '{_connection.Endpoint}', reason: {e.Message}");
+            }
+
+            return false;
         }
 
         private void ListenForRequests()

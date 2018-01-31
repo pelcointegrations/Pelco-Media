@@ -1,6 +1,7 @@
 ﻿using NLog;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using System.Timers;
 
@@ -128,6 +129,21 @@ namespace Pelco.Media.RTSP.Server
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// <see cref="IRtspSessionManager.GetSessionProperties(string)"/>
+        /// </summary>
+        /// <param name="sessionId"></param>
+        /// <returns></returns>
+        public virtual Dictionary<string, object> GetSessionProperties(string sessionId)
+        {
+            return new Dictionary<string, object>();
+        }
+
+        protected IRtspSession GetSession(string sessionId)
+        {
+            return _sessions.ContainsKey(sessionId) ? _sessions[sessionId] : null;
         }
 
         private void RefreshTimer_Elapsed(object sender, ElapsedEventArgs e)
