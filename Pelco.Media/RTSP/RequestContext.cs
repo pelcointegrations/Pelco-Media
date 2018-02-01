@@ -34,7 +34,7 @@ namespace Pelco.Media.RTSP
         /// <returns>true if successful, false otherwise</returns>
         public bool Write(byte[] data)
         {
-            return _listener.Write(data);
+            return _listener.Write(data, 0, data.Length);
         }
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace Pelco.Media.RTSP
         /// <returns>true if successful, false otherwise</returns>
         public bool Write(ByteBuffer buffer)
         {
-            return _listener.Write(buffer.Raw);
+            return _listener.Write(buffer.Raw, buffer.StartIndex, buffer.Length);
         }
     }
 }

@@ -38,6 +38,8 @@ namespace Pelco.Media.RTSP.Server
                 {
                     _stop.Reset();
                     _listener = new TcpListener(IPAddress.Any, _port);
+                    _listener.Server.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+
                     _messages = new BlockingCollection<RtspMessage>();
 
                     _listener.Start();

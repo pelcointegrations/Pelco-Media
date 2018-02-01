@@ -1,8 +1,9 @@
 ﻿using Pelco.Media.Pipeline;
 using Pelco.Media.Pipeline.Transforms;
-using Pelco.Media.RTP;
 using Pelco.Media.RTSP;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using Xunit;
 
@@ -44,42 +45,56 @@ namespace Pelco.Media.Tests.Integrations.Handlers
             Assert.NotEmpty(session.ID);
             Assert.Equal(60u, session.Timeout);
 
+            var sink = new Sink();
             var pipeline = MediaPipeline.CreateBuilder()
                                         .Source(_fixture.Client.GetChannelSource(transport.InterleavedChannels.RtpPort))
                                         .Transform(new DefaultRtpDepacketizer())
-                                        .Sink(new Sink())
+                                        .Sink(sink)
                                         .Build();
 
             pipeline.Start();
 
-            response = _fixture.Client.Request().Session(session.ID).Play();
-            Assert.True(response.ResponseStatus.Is(RtspResponse.Status.Ok));
-            Thread.Sleep(20000);
+            _fixture.Client.Request().Session(session.ID).PlayAsync((res) =>
+            {
+                Assert.True(res.ResponseStatus.Is(RtspResponse.Status.Ok));
+            });
+
+            sink.WaitForCompletion(TimeSpan.FromSeconds(20));
 
             _fixture.Client.Request().Session(session.ID).TeardownAsync((res) => { });
 
-            Console.WriteLine($"Sent {_spy.GetData(session.ID).Value.TotalPacketsSent} frames");
             pipeline.Stop();
+
+            var sessData = _spy.GetData(session.ID);
+            Assert.Equal(sessData.Buffers.Count, sink.ReceivedBuffers.Count);
+            Assert.True(Enumerable.SequenceEqual(sessData.Buffers, sink.ReceivedBuffers));
         }
 
-        private class Sink : ISink
+        private class Sink : SinkBase
         {
-            private int _count;
-            public ISource UpstreamLink { set; get; }
+            private ManualResetEvent _event;
 
-            public void PushEvent(MediaEvent e)
+            public Sink()
             {
-                throw new NotImplementedException();
+                _event = new ManualResetEvent(false);
+
+                ReceivedBuffers = new List<ByteBuffer>();
             }
 
-            public void Stop()
+            public List<ByteBuffer> ReceivedBuffers { get; private set; }
+
+            public bool WaitForCompletion(TimeSpan timeout)
             {
+                return _event.WaitOne(timeout);
             }
 
-            public bool WriteBuffer(ByteBuffer buffer)
+            public override bool WriteBuffer(ByteBuffer buffer)
             {
-                Console.WriteLine(++_count);
-                Console.WriteLine(buffer.Length);
+                ReceivedBuffers.Add(buffer);
+                if (ReceivedBuffers.Count == InterleavedTestSession.FRAMES_TO_SEND)
+                {
+                    _event.Set(); // Notify waiting thread we received all requests.
+                }
 
                 return true;
             }

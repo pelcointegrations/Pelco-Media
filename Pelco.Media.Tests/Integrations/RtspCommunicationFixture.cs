@@ -8,6 +8,8 @@ namespace Pelco.Media.Tests.Integrations
 {
     public class RtspCommunicationFixture : IDisposable
     {
+        private const string GlobalMutexId = "Global\\{387cc644-6041-4eaa-8e9b-6fed2c6bcbab}";
+
         private int _cseq;
         private string _path;
         private RtspServer _server;
@@ -19,26 +21,55 @@ namespace Pelco.Media.Tests.Integrations
 
         public void Initialize(string path, IRequestHandler handler)
         {
-            if (!Initialized)
+            using (var mutex = new Mutex(false, GlobalMutexId))
             {
-                ServerPort = NetworkUnil.FindAvailableTcpPort();
+                bool mutexAcquired = false;
 
-                var dispatcher = new DefaultRequestDispatcher();
-                dispatcher.RegisterHandler(path, handler);
-
-                _path = path;
-                _server = new RtspServer(ServerPort, dispatcher);
-                _server.Start();
-
-                // Wait until the serer port is not available.
-                while (NetworkUnil.IsTcpPortAvailable(ServerPort))
+                try
                 {
-                    Thread.Sleep(1000);
+                    // Because the tests can run on multiple threads we must synchronize
+                    // to ensure that we don't start different test servers on the same port.
+                    if ((mutexAcquired = mutex.WaitOne(5000, false)))
+                    {
+                        if (!Initialized)
+                        {
+                            ServerPort = NetworkUnil.FindAvailableTcpPort();
+
+                            var dispatcher = new DefaultRequestDispatcher();
+                            dispatcher.RegisterHandler(path, handler);
+
+                            _path = path;
+                            _server = new RtspServer(ServerPort, dispatcher);
+                            _server.Start();
+
+                            // Wait until the serer port is not available.
+                            while (NetworkUnil.IsTcpPortAvailable(ServerPort))
+                            {
+                                Thread.Sleep(1000);
+                            }
+
+                            Client = new RtspClient(ServerUriEndpoint);
+
+                            Initialized = true;
+                        }
+                    }
                 }
-
-                Client = new RtspClient(ServerUriEndpoint);
-
-                Initialized = true;
+                catch (AbandonedMutexException)
+                {
+                    // do nothing
+                }
+                catch (Exception)
+                {
+                    // Do nothing since this is just a test, and if we fail here the tests
+                    // are going to fail also.
+                }
+                finally
+                {
+                    if (mutexAcquired)
+                    {
+                        mutex.ReleaseMutex();
+                    }
+                }
             }
         }
 
@@ -63,8 +94,13 @@ namespace Pelco.Media.Tests.Integrations
 
         public void Dispose()
         {
-            _server?.Stop();
             Client?.Close();
+            _server?.Stop();
+
+            while (!NetworkUnil.IsTcpPortAvailable(ServerPort))
+            {
+                Thread.Sleep(1000);
+            }
         }
     }
 }

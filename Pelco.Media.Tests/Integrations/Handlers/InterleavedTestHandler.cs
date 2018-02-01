@@ -7,7 +7,7 @@ namespace Pelco.Media.Tests.Integrations.Handlers
 {
     public class InterleavedTestHandler : RequestHandlerBase
     {
-        private const int PAYLOAD_TYPE = 99;
+        private const int PAYLOAD_TYPE = 98;
 
         private SessionSpy _spy;
         private int _currentChannel = 0;

@@ -19,8 +19,9 @@ namespace Pelco.Media.Pipeline.Transforms
         {
             if (_lastTime != packet.Timestamp)
             {
+                var current = _lastTime;
                 _lastTime = packet.Timestamp;
-                return true;
+                return current != -1;
             }
             return false;
         }

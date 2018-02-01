@@ -74,6 +74,8 @@
     <Compile Include="Pipeline\ObjectTypeHandlerBase.cs" />
     <Compile Include="Pipeline\ObjectTypeSinkBase.cs" />
     <Compile Include="Pipeline\ObjectTypeToBufferTransformBase.cs" />
+    <Compile Include="Pipeline\SinkBase.cs" />
+    <Compile Include="Pipeline\Sinks\TcpInterleavedSink.cs" />
     <Compile Include="Pipeline\Sinks\TeeSink.cs" />
     <Compile Include="Pipeline\Sinks\UdpSink.cs" />
     <Compile Include="Pipeline\SourceBase.cs" />
@@ -81,6 +83,7 @@
     <Compile Include="Pipeline\ObjectTypeSource.cs" />
     <Compile Include="Pipeline\TransformBase.cs" />
     <Compile Include="Pipeline\ObjectTypeTransformBase.cs" />
+    <Compile Include="Pipeline\Transforms\AlwaysFalseDemarcator.cs" />
     <Compile Include="Pipeline\Transforms\BufferToRtpPacketTransform.cs" />
     <Compile Include="Pipeline\Transforms\IRtpDemarcator.cs" />
     <Compile Include="Pipeline\Transforms\MarkerDemarcator.cs" />
@@ -90,11 +93,14 @@
     <Compile Include="Pipeline\Transforms\SsrcFilter.cs" />
     <Compile Include="Pipeline\Transforms\TimestampDemarcator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RTP\DefaultRtpClock.cs" />
     <Compile Include="RTP\IRtpSource.cs" />
     <Compile Include="RTP\OnvifRtpHeader.cs" />
+    <Compile Include="RTP\IRtpClock.cs" />
     <Compile Include="RTP\RtpInterleavedSource.cs" />
     <Compile Include="RTP\RtpPacket.cs" />
     <Compile Include="RTP\RtpSession.cs" />
+    <Compile Include="RTP\RtpTimestamp.cs" />
     <Compile Include="RTP\RtpUdpSource.cs" />
     <Compile Include="RTP\RtpVersion.cs" />
     <Compile Include="RTSP\Client\AuthChallenge.cs" />

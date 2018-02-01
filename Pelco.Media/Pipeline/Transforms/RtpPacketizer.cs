@@ -15,19 +15,23 @@ namespace Pelco.Media.Pipeline.Transforms
         private uint _ssrc;
         private ushort _seqNum;
         private byte _payloadType;
+        private IRtpClock _rtpClock;
 
-        public RtpPacketizer(uint ssrc, byte payloadType, int mtu = DEFAULT_MTU)
+        public RtpPacketizer(IRtpClock clock, uint ssrc, byte payloadType, int mtu = DEFAULT_MTU)
         {
             var rand = new Random();
 
             _mtu = mtu;
             _ssrc = ssrc;
+            _rtpClock = clock ?? throw new ArgumentNullException("Clock cannot be null");
             _seqNum = (ushort)rand.Next(0, ushort.MaxValue);
             _payloadType = payloadType;
         }
 
         public override bool WriteBuffer(ByteBuffer buffer)
         {
+            var instant = _rtpClock.Clock(buffer);
+
             var slices = SliceData(buffer);
 
             for (int i = 0; i < slices.Count; ++i)
@@ -43,19 +47,7 @@ namespace Pelco.Media.Pipeline.Transforms
                     Marker = i == (slices.Count - 1),
                 };
 
-                if (buffer.TimeReference != null)
-                {
-                    var onvifHeader = new OnvifRtpHeader()
-                    {
-                        CbitSet = true,
-                        Time = buffer.TimeReference
-                    };
-
-                    packet.HasExtensionHeader = true;
-                    packet.ExtensionHeaderData = OnvifRtpHeader.PROFILE_ID;
-                    packet.ExtensionData = onvifHeader.Encode();
-                }
-
+                instant.Apply(packet);
                 PushBuffer(packet.Encode());
             }
 

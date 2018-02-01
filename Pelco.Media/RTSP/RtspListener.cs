@@ -104,11 +104,11 @@ namespace Pelco.Media.RTSP
             }
         }
 
-        public bool Write(byte[] data)
+        public bool Write(byte[] data, int offset, int count)
         {
             try
             {
-                _connection.Write(data, 0, data.Length);
+                _connection.Write(data, offset, count);
                 return true;
             }
             catch (Exception e)

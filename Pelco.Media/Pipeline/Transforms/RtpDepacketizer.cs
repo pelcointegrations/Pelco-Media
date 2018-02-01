@@ -1,7 +1,6 @@
 ﻿using NLog;
 using Pelco.Media.RTP;
 using System;
-using System.Diagnostics;
 
 namespace Pelco.Media.Pipeline.Transforms
 {
@@ -39,14 +38,14 @@ namespace Pelco.Media.Pipeline.Transforms
                 var packet = RtpPacket.Decode(buffer);
                 if (_doesPacketBelongToNewFrame.Check(packet))
                 {
-                    AssembleAndPush(packet);
+                    AssembleAndPush();
                 }
 
                 addRtpPacket(packet);
 
                 if (_doesPacketEndThisFrame.Check(packet))
                 {
-                    AssembleAndPush(packet);
+                    AssembleAndPush();
                 }
             }
             catch (Exception e)
@@ -70,11 +69,14 @@ namespace Pelco.Media.Pipeline.Transforms
         /// <param name="packet"></param>
         protected abstract void addRtpPacket(RtpPacket packet);
 
-        private void AssembleAndPush(RtpPacket packet)
+        private void AssembleAndPush()
         {
             var frame = Assemble();
-            frame.IsDamaged = IsDamaged;
-            PushBuffer(frame);
+            if (frame.Length > 0)
+            {
+                frame.IsDamaged = IsDamaged;
+                PushBuffer(frame);
+            }
         }
     }
 
@@ -98,7 +100,6 @@ namespace Pelco.Media.Pipeline.Transforms
 
         protected override void addRtpPacket(RtpPacket packet)
         {
-            Debug.WriteLine(packet.SequenceNumber);
             ushort seqNum = packet.SequenceNumber;
 
             if (_processingFragment)
@@ -132,6 +133,7 @@ namespace Pelco.Media.Pipeline.Transforms
             var assembled = _frame;
             _frame = new ByteBuffer();
             _processingFragment = false;
+            IsDamaged = false;
 
             assembled.MarkReadOnly();
             return assembled;

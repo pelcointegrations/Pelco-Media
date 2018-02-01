@@ -421,11 +421,11 @@ namespace Pelco.Media.RTSP
                     byte b = reader.ReadByte();
                     char c = Convert.ToChar(b);
 
-                    if (c == '\r')
+                    if (c == '\n')
                     {
                         break;
                     }
-                    if (c != '\n')
+                    if (c != '\n' && c != '\r')
                     {
                         if (_size > _lineBuffer.Capacity)
                         {

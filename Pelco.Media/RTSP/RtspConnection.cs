@@ -141,16 +141,13 @@ namespace Pelco.Media.RTSP
         {
             CheckAndAttemptReconnect();
 
-            lock (WriteLock)
+            try
             {
-                try
-                {
-                    _stream.WriteByte(value);
-                }
-                catch (Exception e)
-                {
-                    LOG.Error(e, $"Failed to write to connection stream, reason: {e.Message}");
-                }
+                _stream.WriteByte(value);
+            }
+            catch (Exception e)
+            {
+                LOG.Error(e, $"Failed to write to connection stream, reason: {e.Message}");
             }
         }
 
@@ -161,16 +158,13 @@ namespace Pelco.Media.RTSP
         {
             CheckAndAttemptReconnect();
 
-            lock (WriteLock)
+            try
             {
-                try
-                {
-                    _stream.Write(buffer, offset, size);
-                }
-                catch (Exception e)
-                {
-                    LOG.Error(e, $"Failed to write to connection stream, reason: {e.Message}");
-                }
+                _stream.WriteAsync(buffer, offset, size);
+            }
+            catch (Exception e)
+            {
+                LOG.Error(e, $"Failed to write to connection stream, reason: {e.Message}");
             }
         }
 

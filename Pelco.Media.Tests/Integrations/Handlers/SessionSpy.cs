@@ -1,4 +1,6 @@
-﻿using System.Collections.Concurrent;
+﻿using Pelco.Media.Pipeline;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 
 namespace Pelco.Media.Tests.Integrations.Handlers
 {
@@ -16,9 +18,9 @@ namespace Pelco.Media.Tests.Integrations.Handlers
             return _data.ContainsKey(sessionId);
         }
 
-        public SessionData? GetData(string sessionId)
+        public SessionData GetData(string sessionId)
         {
-            SessionData? data = null;
+            SessionData data = null;
             if (_data.ContainsKey(sessionId))
             {
                 data = _data[sessionId];
@@ -31,23 +33,19 @@ namespace Pelco.Media.Tests.Integrations.Handlers
         {
             _data.TryAdd(sessionId, data);
         }
-
-        public void IncrementBy(string sessionId, int count, int numBytes)
-        {
-            if (_data.ContainsKey(sessionId))
-            {
-                var data = _data[sessionId];
-                data.TotalPacketsSent += count;
-                data.TotalBytesSent += numBytes;
-            }
-        }
     }
 
-    public struct SessionData
+    public class SessionData
     {
-        public long TotalBytesSent { get; set; }
+        private List<ByteBuffer> _buffers = new List<ByteBuffer>();
 
-        public int TotalPacketsSent { get; set; }
+        public List<ByteBuffer> Buffers
+        {
+            get
+            {
+                return _buffers;
+            }
+        }
     }
 
 }

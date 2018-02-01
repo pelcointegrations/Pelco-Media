@@ -7,7 +7,10 @@ namespace Pelco.Media.Tests.Utils
         public static int FindAvailableTcpPort(int startPort = 4500)
         {
             int port = startPort;
-            while (!IsTcpPortAvailable(port++)) ;
+            while (!IsTcpPortAvailable(port))
+            {
+                port += 1;
+            }
 
             return port;
         }

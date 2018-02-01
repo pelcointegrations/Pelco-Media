@@ -66,6 +66,7 @@
     <Compile Include="Integrations\Handlers\TestSource.cs" />
     <Compile Include="Integrations\RtspClientServerTests.cs" />
     <Compile Include="Integrations\RtspCommunicationFixture.cs" />
+    <Compile Include="Pipeline\RtpPackatizeDepacketizeTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RSTP\SessionHeaderTests.cs" />
     <Compile Include="RSTP\TransportHeaderTests.cs" />
