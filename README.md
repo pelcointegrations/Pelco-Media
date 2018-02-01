@@ -16,11 +16,11 @@ The framework provides the following functionaliy...
 - Video overlay functionality used for drawing simple shapes on top of video.
 
 ## Links
-[Documentation](https://github.com/pelcointegrations/Pelco-Media/wiki/Pelco-VideoXpert-Media-Metadata-Framework)
+[Documentation](https://github.com/pelcointegrations/Pelco-Media/wiki)
 
 ## How To Build
 
 You will require the following to build:
-- [Visual Studio 2017](https://github.com/pelcointegrations/Pelco-Media/wiki)
+- [Visual Studio 2017](https://imagine.microsoft.com/en-us/Catalog/Product/530)
 
 Load the Pelco.Media.sln file into visual studio.  It's that simple.
