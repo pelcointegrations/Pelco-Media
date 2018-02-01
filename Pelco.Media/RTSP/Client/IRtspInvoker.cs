@@ -8,7 +8,15 @@ namespace Pelco.Media.RTSP.Client
     /// creating and sending requests to an rtsp server.
     /// </summary>
     public interface IRtspInvoker
-    {   
+    {
+        /// <summary>
+        /// Sets the Request Uri to use. The Uri must be from the same host and port
+        /// that the client connected to otherwise the request will not work.
+        /// </summary>
+        /// <param name="uri"></param>
+        /// <returns></returns>
+        IRtspInvoker Uri(Uri uri);
+
         /// <summary>
         /// Sets the SESSION RTSP header value.
         /// </summary>

@@ -558,6 +558,13 @@ namespace Pelco.Media.RTSP.Client
 
                 return this;
             }
+
+            public IRtspInvoker Uri(Uri uri)
+            {
+                _builder.Uri(uri);
+
+                return this;
+            }
         }
     }
 }
