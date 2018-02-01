@@ -16,7 +16,7 @@ The framework provides the following functionaliy...
 - Video overlay functionality used for drawing simple shapes on top of video.
 
 ## Links
-
+[Documentation](https://github.com/pelcointegrations/Pelco-Media/wiki/Pelco-VideoXpert-Media-Metadata-Framework)
 
 ## How To Build
 
