@@ -21,6 +21,6 @@ The framework provides the following functionaliy...
 ## How To Build
 
 You will require the following to build:
-- [Visual Studio 2017](https://imagine.microsoft.com/en-us/Catalog/Product/530)
+- [Visual Studio 2017](https://github.com/pelcointegrations/Pelco-Media/wiki)
 
 Load the Pelco.Media.sln file into visual studio.  It's that simple.
