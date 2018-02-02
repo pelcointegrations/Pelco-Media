@@ -13,6 +13,17 @@ namespace Pelco.Media.Tests.Pipeline
         [Fact]
         public void TestPacketizeDepacketize()
         {
+            RunTest(14000 /* bytes */);
+        }
+
+        [Fact]
+        public void TestSinglePacketPacketizeDepacketize()
+        {
+            RunTest(800 /* bytes */);
+        }
+
+        private void RunTest(int frameSize)
+        {
             var src = new Source();
             var sink = new Sink();
             var pipeline = MediaPipeline.CreateBuilder()
@@ -36,8 +47,11 @@ namespace Pelco.Media.Tests.Pipeline
 
         private sealed class Source : SourceBase
         {
-            public Source()
+            private int _frameSize;
+
+            public Source(int frameSize = 14000)
             {
+                _frameSize = frameSize;
                 SentBuffer = ByteBuffer.EMPTY;
             }
 
@@ -45,7 +59,7 @@ namespace Pelco.Media.Tests.Pipeline
 
             public override void Start()
             {
-                SentBuffer = RandomUtils.RandomBytes(14000);
+                SentBuffer = RandomUtils.RandomBytes(_frameSize);
                 SentBuffer.TimeReference = DateTime.Now;
                 PushBuffer(SentBuffer);
             }
