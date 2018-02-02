@@ -1,4 +1,11 @@
-﻿namespace Pelco.Media.RTSP.Server
+﻿//
+// Copyright (c) 2018 Pelco. All rights reserved.
+//
+// This file contains trade secrets of Pelco.  No part may be reproduced or
+// transmitted in any form by any means or for any purpose without the express
+// written permission of Pelco.
+//
+namespace Pelco.Media.RTSP.Server
 {
     /// <summary>
     /// Interfaced used to defined a request handler for handling RTSP server requests.

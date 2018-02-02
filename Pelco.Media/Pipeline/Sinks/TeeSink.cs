@@ -1,4 +1,11 @@
-﻿using NLog;
+﻿///
+// Copyright (c) 2018 Pelco. All rights reserved.
+//
+// This file contains trade secrets of Pelco.  No part may be reproduced or
+// transmitted in any form by any means or for any purpose without the express
+// written permission of Pelco.
+//
+using NLog;
 using System;
 using System.Collections.Concurrent;
 using System.Threading;
@@ -6,7 +13,11 @@ using System.Threading.Tasks;
 
 namespace Pelco.Media.Pipeline.Sinks
 {
-    public class TeeSink : ISink
+    /// <summary>
+    /// A TeeSink is a sink that takes in a single source buffer and replicates
+    /// it out to all output sources.
+    /// </summary>
+    public class TeeSink : SinkBase
     {
         private const int DEFAULT_QUEUE_SIZE = 100;
 
@@ -14,26 +25,20 @@ namespace Pelco.Media.Pipeline.Sinks
         private ISource _upstreamLink;
         private ConcurrentBag<ISink> _clients;
 
-        public ISource UpstreamLink
-        {
-            get
-            {
-                return _upstreamLink;
-            }
-
-            set
-            {
-                _upstreamLink = value;
-            }
-        }
-
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="queueSize">Size of the input source queue</param>
         public TeeSink(int queueSize = DEFAULT_QUEUE_SIZE)
         {
             _queueSize = queueSize;
             _clients = new ConcurrentBag<ISink>();
         }
 
-        public void Stop()
+        /// <summary>
+        /// <see cref="ISink.Stop"/>
+        /// </summary>
+        public override void Stop()
         {
             foreach (var client in _clients)
             {
@@ -48,6 +53,10 @@ namespace Pelco.Media.Pipeline.Sinks
             }
         }
 
+        /// <summary>
+        /// Creates an new output source instance.
+        /// </summary>
+        /// <returns></returns>
         public ISource CreateSource()
         {
             var source = new TeeOutflowSource(_queueSize);
@@ -56,7 +65,12 @@ namespace Pelco.Media.Pipeline.Sinks
             return source;
         }
 
-        public bool WriteBuffer(ByteBuffer buffer)
+        /// <summary>
+        /// <see cref="ISink.WriteBuffer(ByteBuffer)"/>
+        /// </summary>
+        /// <param name="buffer"></param>
+        /// <returns></returns>
+        public override bool WriteBuffer(ByteBuffer buffer)
         {
             foreach (var client in _clients)
             {
@@ -66,12 +80,7 @@ namespace Pelco.Media.Pipeline.Sinks
             return true;
         }
 
-        public virtual void PushEvent(MediaEvent e)
-        {
-            UpstreamLink?.OnMediaEvent(e);
-        }
-
-        class TeeOutflowSource : TransformBase
+        private class TeeOutflowSource : TransformBase
         {
             private static readonly Logger LOG = LogManager.GetCurrentClassLogger();
 

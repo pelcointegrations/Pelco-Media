@@ -1,5 +1,15 @@
-﻿namespace Pelco.Media.Pipeline
+﻿//
+// Copyright (c) 2018 Pelco. All rights reserved.
+//
+// This file contains trade secrets of Pelco.  No part may be reproduced or
+// transmitted in any form by any means or for any purpose without the express
+// written permission of Pelco.
+//
+namespace Pelco.Media.Pipeline
 {
+    /// <summary>
+    /// Source base class.
+    /// </summary>
     public class SourceBase : ISource
     {
         private readonly object _flushing_lock = new object();
@@ -8,6 +18,9 @@
         private ISink _downstreamLink;
         private ISource _upstreamLink;
 
+        /// <summary>
+        /// <see cref="ISource.DownstreamLink"/>
+        /// </summary>
         public ISink DownstreamLink
         {
             private get
@@ -21,6 +34,9 @@
             }
         }
 
+        /// <summary>
+        /// <see cref="ISource.UpstreamLink"/>
+        /// </summary>
         public ISource UpstreamLink
         {
             get
@@ -34,6 +50,9 @@
             }
         }
 
+        /// <summary>
+        /// <see cref="ISource.Flushing"/>
+        /// </summary>
         public bool Flushing
         {
             get
@@ -73,14 +92,24 @@
             }
         }
 
+        /// <summary>
+        /// <see cref="ISource.Start"/>
+        /// </summary>
         public virtual void Start()
         {
         }
 
+        /// <summary>
+        /// <see cref="ISource.Stop"/>
+        /// </summary>
         public virtual void Stop()
         {
         }
 
+        /// <summary>
+        /// <see cref="ISource.OnMediaEvent(MediaEvent)"/>
+        /// </summary>
+        /// <param name="e"></param>
         public virtual void OnMediaEvent(MediaEvent e)
         {
             UpstreamLink?.OnMediaEvent(e);

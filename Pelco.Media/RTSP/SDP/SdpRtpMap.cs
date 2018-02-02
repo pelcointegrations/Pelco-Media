@@ -1,4 +1,11 @@
-﻿using System;
+﻿//
+// Copyright (c) 2018 Pelco. All rights reserved.
+//
+// This file contains trade secrets of Pelco.  No part may be reproduced or
+// transmitted in any form by any means or for any purpose without the express
+// written permission of Pelco.
+//
+using System;
 using System.Text.RegularExpressions;
 
 namespace Pelco.Media.RTSP.SDP

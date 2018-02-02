@@ -1,9 +1,21 @@
-﻿using NLog;
+﻿//
+// Copyright (c) 2018 Pelco. All rights reserved.
+//
+// This file contains trade secrets of Pelco.  No part may be reproduced or
+// transmitted in any form by any means or for any purpose without the express
+// written permission of Pelco.
+//
+using NLog;
 using Pelco.Media.RTP;
 using System;
 
 namespace Pelco.Media.Pipeline.Transforms
 {
+    /// <summary>
+    /// An RtpPayloadTransform processes an encoded RTP packet and pushes the
+    /// provided packet payload upstream. If the packet contains a Onvif header extension
+    /// the payload buffer's TimeReference will be set to the provided Onvif time.
+    /// </summary>
     public class RtpPayloadTransform : TransformBase
     {
         private static readonly Logger LOG = LogManager.GetCurrentClassLogger();

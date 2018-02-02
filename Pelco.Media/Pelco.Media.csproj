@@ -65,13 +65,11 @@
     <Compile Include="Pipeline\ByteBuffer.cs" />
     <Compile Include="Pipeline\BufferToObjectTypeTransformBase.cs" />
     <Compile Include="Pipeline\EndOfBufferException.cs" />
-    <Compile Include="Pipeline\InboundObjectHandler.cs" />
     <Compile Include="Pipeline\IObjectTypeSink.cs" />
     <Compile Include="Pipeline\ISink.cs" />
     <Compile Include="Pipeline\ISource.cs" />
     <Compile Include="Pipeline\MediaEvent.cs" />
     <Compile Include="Pipeline\MediaPipeline.cs" />
-    <Compile Include="Pipeline\ObjectTypeHandlerBase.cs" />
     <Compile Include="Pipeline\ObjectTypeSinkBase.cs" />
     <Compile Include="Pipeline\ObjectTypeToBufferTransformBase.cs" />
     <Compile Include="Pipeline\SinkBase.cs" />

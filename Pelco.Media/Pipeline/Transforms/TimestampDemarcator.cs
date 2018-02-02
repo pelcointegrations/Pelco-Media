@@ -1,9 +1,16 @@
-﻿using Pelco.Media.RTP;
+﻿//
+// Copyright (c) 2018 Pelco. All rights reserved.
+//
+// This file contains trade secrets of Pelco.  No part may be reproduced or
+// transmitted in any form by any means or for any purpose without the express
+// written permission of Pelco.
+//
+using Pelco.Media.RTP;
 
 namespace Pelco.Media.Pipeline.Transforms
 {
     /// <summary>
-    /// Demarcator used to declare a packetto belong to the next frame if
+    /// Demarcator used to declare a packet to belong to the next frame if
     /// the previous packet had a different timestamp.
     /// </summary>
     public class TimestampDemarcator : IRtpDemarcator
