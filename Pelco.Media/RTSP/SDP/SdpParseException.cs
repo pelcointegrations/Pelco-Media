@@ -9,6 +9,7 @@ using System;
 
 namespace Pelco.Media.RTSP.SDP
 {
+    [Serializable]
     public class SdpParseException : Exception
     {
         public SdpParseException(string msg) : base(msg)

@@ -40,6 +40,11 @@ namespace Pelco.Media.RTP
             LOG.Debug($"Created RtpUdpSource with channels {rtpPort}-{rtcpPort}");
         }
 
+        ~RtpUdpSource()
+        {
+            Dispose();
+        }
+
         public int RtpPort
         {
             get
@@ -89,6 +94,8 @@ namespace Pelco.Media.RTP
         {
             _rtpChannel?.Dispose();
             _rtcpChannel?.Dispose();
+
+            GC.SuppressFinalize(this);
         }
 
         private bool FindAvailablePorts(out int rtpPort, out int rtcpPort)
@@ -144,6 +151,11 @@ namespace Pelco.Media.RTP
                 _source.Connect(new IPEndPoint(address, 0));
             }
 
+            ~UdpChannel()
+            {
+                Dispose();
+            }
+
             public int Port
             {
                 get
@@ -192,6 +204,8 @@ namespace Pelco.Media.RTP
                         _started = false;
 
                         LOG.Debug($"UDP channel shutdown for {_address}:{_port}");
+
+                        GC.SuppressFinalize(this);
                     }
                     catch (Exception e)
                     {

@@ -55,6 +55,11 @@ namespace Pelco.Media.Metadata
             _client = new RtspClient(uri, creds);
         }
 
+        ~VxMetadataSource()
+        {
+            Dispose(false);
+        }
+
         public void Initialize()
         {
             lock (SourceLock)

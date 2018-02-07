@@ -27,6 +27,11 @@ namespace Pelco.Media.Metadata
             _streams = new ConcurrentDictionary<string, IMetadataStream>();
         }
 
+        ~MetadataStreamManagerBase()
+        {
+            Dispose(false).Wait();
+        }
+
         public virtual async Task JumpAllToLive()
         {
             await Task.WhenAll(_streams.Values.Select(s =>
@@ -124,11 +129,8 @@ namespace Pelco.Media.Metadata
         {
             if (!_disposed)
             {
-                if (disposing)
-                {
-                    await StopAll();
-                    _streams.Clear();
-                }
+                await StopAll();
+                _streams.Clear();
 
                 _disposed = true;
             }

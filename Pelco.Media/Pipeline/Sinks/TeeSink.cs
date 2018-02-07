@@ -36,6 +36,11 @@ namespace Pelco.Media.Pipeline.Sinks
             _clients = new ConcurrentBag<ISink>();
         }
 
+        ~TeeSink()
+        {
+            Dispose(false);
+        }
+
         /// <summary>
         /// <see cref="ISink.Stop"/>
         /// </summary>
@@ -117,6 +122,11 @@ namespace Pelco.Media.Pipeline.Sinks
                 _disposed = false;
                 _stop = new ManualResetEvent(false);
                 _queue = new BlockingCollection<ByteBuffer>(queueSize);
+            }
+
+            ~TeeOutflowSource()
+            {
+                Dispose(false);
             }
 
             public override void Start()

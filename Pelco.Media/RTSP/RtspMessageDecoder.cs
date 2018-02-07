@@ -403,7 +403,7 @@ namespace Pelco.Media.RTSP
             BadMessage,
         }
 
-        private class LineReader
+        private sealed class LineReader : IDisposable
         {
             int _size;
             private MemoryStream _lineBuffer;
@@ -413,6 +413,17 @@ namespace Pelco.Media.RTSP
 
                 _size = 0;
                 _lineBuffer = new MemoryStream(capacity);
+            }
+
+            ~LineReader()
+            {
+                Dispose();
+            }
+
+            public void Dispose()
+            {
+                _lineBuffer?.Dispose();
+                GC.SuppressFinalize(this);
             }
 
             public string Read(BinaryReader reader)

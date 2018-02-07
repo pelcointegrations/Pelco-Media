@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace Pelco.Media.RTSP.Server
 {
-    public class RtspServer
+    public sealed class RtspServer : IDisposable
     {
         private static readonly Logger LOG = LogManager.GetCurrentClassLogger();
 
@@ -35,6 +35,11 @@ namespace Pelco.Media.RTSP.Server
             _dispatcher = dispatcher;
             _stop = new ManualResetEvent(false);
             _listeners = new Dictionary<string, RtspListener>();
+        }
+
+        ~RtspServer()
+        {
+            Dispose();
         }
 
         public void Start()
@@ -183,6 +188,12 @@ namespace Pelco.Media.RTSP.Server
             {
                 LOG.Error($"Unable to process request because no active connection was found for {request.URI}");
             }
+        }
+
+        public void Dispose()
+        {
+            Stop();
+            GC.SuppressFinalize(this);
         }
     }
 }

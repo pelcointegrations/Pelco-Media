@@ -57,6 +57,11 @@ namespace Pelco.Media.RTSP.Client
             _listener.Start();
         }
 
+        ~RtspClient()
+        {
+            Dispose();
+        }
+
         public bool IsConnected
         {
             get
@@ -105,6 +110,8 @@ namespace Pelco.Media.RTSP.Client
                     src.Value.Stop();
                 }
                 _sources.Clear();
+
+                GC.SuppressFinalize(this);
             }
         }
 

@@ -107,6 +107,11 @@ namespace Pelco.Media.Pipeline.Transforms
             _expectedNextSeqNum = 0;
         }
 
+        ~DefaultRtpDepacketizer()
+        {
+            Dispose(false);
+        }
+
         public void Dispose()
         {
             Dispose(true);

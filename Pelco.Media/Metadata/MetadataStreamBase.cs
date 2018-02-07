@@ -30,6 +30,11 @@ namespace Pelco.Media.Metadata
             RtspEndpoint = rtspEndpoint ?? throw new ArgumentNullException("rtspEndpoint cannot be null");
         }
 
+        ~MetadataStreamBase()
+        {
+            Dispose(false);
+        }
+
         public Uri RtspEndpoint { get; private set; }
 
         public bool IsLive { get; private set; }
@@ -107,11 +112,7 @@ namespace Pelco.Media.Metadata
         {
             if (!_disposed)
             {
-                if (disposing)
-                {
-                    _player?.Dispose();
-                }
-
+                _player?.Dispose();   
                 _disposed = true;
             }
         }

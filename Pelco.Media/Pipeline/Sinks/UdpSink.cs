@@ -36,6 +36,11 @@ namespace Pelco.Media.Pipeline.Sinks
             _socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
         }
 
+        ~UdpSink()
+        {
+            Dispose();
+        }
+
         public ISource UpstreamLink
         {
             get
@@ -95,6 +100,7 @@ namespace Pelco.Media.Pipeline.Sinks
         public void Dispose()
         {
             _socket?.Dispose();
+            GC.SuppressFinalize(this);
         }
     }
 }

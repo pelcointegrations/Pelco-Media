@@ -18,6 +18,7 @@ namespace Pelco.Media.RTSP.Server
     {
         private static readonly Logger LOG = LogManager.GetCurrentClassLogger();
 
+        private bool _disposed;
         private Timer _refreshTimer;
         private ConcurrentDictionary<string, IRtspSession> _sessions;
 
@@ -28,6 +29,11 @@ namespace Pelco.Media.RTSP.Server
             _refreshTimer.Elapsed += RefreshTimer_Elapsed;
 
             _sessions = new ConcurrentDictionary<string, IRtspSession>();
+        }
+
+        ~RtspSessionManager()
+        {
+            Dispose(false);
         }
 
         /// <summary>
@@ -46,21 +52,6 @@ namespace Pelco.Media.RTSP.Server
         public void Stop()
         {
             Dispose();
-
-            foreach (var session in _sessions)
-            {
-                try
-                {
-                    session.Value.Stop();
-
-                    LOG.Debug($"Stopped RTSP session '{session.Value.Id}'");
-                }
-                catch (Exception e)
-                {
-                    LOG.Info(e, $"Caught exception while shutting down session, msg={e.Message}");
-                }
-            }
-            _sessions.Clear();
 
             LOG.Info("Successfully shutdown RTSP session manager.");
         }
@@ -167,7 +158,33 @@ namespace Pelco.Media.RTSP.Server
 
         public void Dispose()
         {
-            _refreshTimer.Stop();
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                _refreshTimer?.Dispose();
+
+                foreach (var session in _sessions)
+                {
+                    try
+                    {
+                        session.Value.Stop();
+
+                        LOG.Debug($"Stopped RTSP session '{session.Value.Id}'");
+                    }
+                    catch (Exception e)
+                    {
+                        LOG.Info(e, $"Caught exception while shutting down session, msg={e.Message}");
+                    }
+                }
+                _sessions.Clear();
+
+                _disposed = true;
+            }
         }
 
         #endregion

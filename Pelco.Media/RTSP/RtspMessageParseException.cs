@@ -9,6 +9,7 @@ using System;
 
 namespace Pelco.Media.RTSP
 {
+    [Serializable]
     class RtspMessageParseException : Exception
     {
         public RtspMessageParseException(string msg) : base(msg)

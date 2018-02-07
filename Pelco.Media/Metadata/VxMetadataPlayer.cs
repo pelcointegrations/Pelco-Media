@@ -180,11 +180,11 @@ namespace Pelco.Media.Metadata
             {
                 if (disposing)
                 {
-                    _pipeline?.Stop();
-                    _source?.Dispose();
-
                     _initialized = false;
                 }
+
+                _pipeline?.Stop();
+                _source?.Dispose();
 
                 _disposed = true;
             }
