@@ -185,9 +185,10 @@ namespace Pelco.Media.Metadata
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
-        public void Dispose(bool disposeClient)
+        protected virtual void Dispose(bool disposeClient)
         {
             lock (SourceLock)
             {
@@ -201,7 +202,7 @@ namespace Pelco.Media.Metadata
 
                 if (disposeClient)
                 {
-                    _client.Dispose();
+                    _client?.Dispose();
                 }
 
                 _state = PlayingState.NONE;
@@ -308,7 +309,7 @@ namespace Pelco.Media.Metadata
                 {
                     if (rtpSource != null)
                     {
-                        rtpSource.Stop();
+                        rtpSource?.Stop();
                     }
 
                     if (e is RtspClientException)
@@ -351,12 +352,7 @@ namespace Pelco.Media.Metadata
                     {
                         LOG.Error(e, $"Failed to start playing VxMetadataSource from '{_currentUri}'");
 
-                        if (session != null)
-                        {
-                            // A failure occured we should dispose the session to ensure we
-                            // cleanup our resources.
-                            session.Dispose();
-                        }
+                        session?.Dispose();
 
                         throw e;
                     }

@@ -90,19 +90,38 @@ namespace Pelco.Media.Pipeline.Transforms
     /// <summary>
     /// Default implementation of the an RTP packetizer.
     /// </summary>
-    public class DefaultRtpDepacketizer : RtpDepacketizerBase
+    public class DefaultRtpDepacketizer : RtpDepacketizerBase, IDisposable
     {
         private static readonly Logger LOG = LogManager.GetCurrentClassLogger();
 
+        private bool _disposed;
         private ByteBuffer _frame;
         private bool _processingFragment;
         private ushort _expectedNextSeqNum;
 
         public DefaultRtpDepacketizer() : base (new TimestampDemarcator(), new MarkerDemarcator())
         {
+            _disposed = false;
             _frame = new ByteBuffer();
             _processingFragment = false;
             _expectedNextSeqNum = 0;
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    _frame?.Dispose();
+                }
+            }
         }
 
         protected override void addRtpPacket(RtpPacket packet)

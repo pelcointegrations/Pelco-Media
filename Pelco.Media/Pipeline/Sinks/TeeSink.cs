@@ -17,12 +17,12 @@ namespace Pelco.Media.Pipeline.Sinks
     /// A TeeSink is a sink that takes in a single source buffer and replicates
     /// it out to all output sources.
     /// </summary>
-    public class TeeSink : SinkBase
+    public class TeeSink : SinkBase, IDisposable
     {
         private const int DEFAULT_QUEUE_SIZE = 100;
 
+        private bool _disposed;
         private int _queueSize;
-        private ISource _upstreamLink;
         private ConcurrentBag<ISink> _clients;
 
         /// <summary>
@@ -31,6 +31,7 @@ namespace Pelco.Media.Pipeline.Sinks
         /// <param name="queueSize">Size of the input source queue</param>
         public TeeSink(int queueSize = DEFAULT_QUEUE_SIZE)
         {
+            _disposed = false;
             _queueSize = queueSize;
             _clients = new ConcurrentBag<ISink>();
         }
@@ -80,16 +81,40 @@ namespace Pelco.Media.Pipeline.Sinks
             return true;
         }
 
-        private class TeeOutflowSource : TransformBase
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    foreach (var client in _clients)
+                    {
+                        (client as TeeOutflowSource).Dispose();
+                    }
+                }
+
+                _disposed = true;
+            }
+        }
+
+        private class TeeOutflowSource : TransformBase, IDisposable
         {
             private static readonly Logger LOG = LogManager.GetCurrentClassLogger();
 
+            private bool _disposed;
             private ManualResetEvent _stop;
             private BlockingCollection<ByteBuffer> _queue;
 
             public TeeOutflowSource(int queueSize)
             {
                 Flushing = true;
+                _disposed = false;
                 _stop = new ManualResetEvent(false);
                 _queue = new BlockingCollection<ByteBuffer>(queueSize);
             }
@@ -107,7 +132,7 @@ namespace Pelco.Media.Pipeline.Sinks
 
             public override void Stop()
             {
-                _stop.Set();
+                Dispose();
             }
 
             public override bool WriteBuffer(ByteBuffer buffer)
@@ -121,6 +146,26 @@ namespace Pelco.Media.Pipeline.Sinks
                 }
 
                 return true;
+            }
+
+            public void Dispose()
+            {
+                Dispose(true);
+                GC.SuppressFinalize(this);
+            }
+
+            protected virtual void Dispose(bool disposing)
+            {
+                if (!_disposed)
+                {
+                    if (disposing)
+                    {
+                        _stop.Set();
+                        _stop?.Dispose();
+                    }
+
+                    _disposed = true;
+                }
             }
 
             private void ProcessBuffers()

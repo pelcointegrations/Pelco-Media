@@ -39,14 +39,17 @@ namespace Pelco.Media.Tests.Integrations.Handlers
         {
             lock (this)
             {
-                _pipeline = MediaPipeline.CreateBuilder()
-                                         .Source(_src)
-                                         .Transform(new RecordingTransform(_spy, Id))
-                                         .Transform(new RtpPacketizer(new DefaultRtpClock(90000), SSRC, _payloadType))
-                                         .Sink(new TcpInterleavedSink(_context, (byte)_ports.RtpPort))
-                                         .Build();
+                if (_pipeline == null)
+                {
+                    _pipeline = MediaPipeline.CreateBuilder()
+                                             .Source(_src)
+                                             .Transform(new RecordingTransform(_spy, Id))
+                                             .Transform(new RtpPacketizer(new DefaultRtpClock(90000), SSRC, _payloadType))
+                                             .Sink(new TcpInterleavedSink(_context, (byte)_ports.RtpPort))
+                                             .Build();
 
-                _pipeline.Start();
+                    _pipeline.Start();
+                }
             }
         }
 

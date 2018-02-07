@@ -9,6 +9,7 @@ using System;
 
 namespace Pelco.Media.Metadata
 {
+    [Serializable]
     public class PlayerInitializationException : Exception
     {
         public PlayerInitializationException() : base()

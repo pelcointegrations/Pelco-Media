@@ -27,8 +27,8 @@ namespace Pelco.Media.Metadata
         private static readonly object PlayerLock = new object();
 
         private bool _isLive;
+        private bool _disposed;
         private bool _initialized;
-        private DateTime? _pauseTime;
         private MediaPipeline _pipeline;
         private VxMetadataSource _source;
         private PlayerConfiguration _config;
@@ -52,7 +52,7 @@ namespace Pelco.Media.Metadata
             }
 
             _isLive = false;
-            _pauseTime = null;
+            _disposed = false;
             _initialized = false;
             _source = new VxMetadataSource(_config.Uri, _config.Creds);
         }
@@ -170,10 +170,24 @@ namespace Pelco.Media.Metadata
 
         public void Dispose()
         {
-            _pipeline.Stop();
-            _source.Dispose();
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
 
-            _initialized = false;
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    _pipeline?.Stop();
+                    _source?.Dispose();
+
+                    _initialized = false;
+                }
+
+                _disposed = true;
+            }
         }
     }
 }

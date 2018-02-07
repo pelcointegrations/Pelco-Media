@@ -31,6 +31,7 @@ namespace Pelco.Media.Pipeline
 
         private static readonly Int32 MAX_BUFFER_LENGTH = Int32.MaxValue;
 
+        private bool _disposed;
         private byte[] _buffer;
         private bool _isOpen;
         private bool _readOnly;
@@ -52,6 +53,7 @@ namespace Pelco.Media.Pipeline
                 throw new ArgumentOutOfRangeException($"Cannot create buffer with a cacity of '{capacity}'");
             }
 
+            _disposed = false;
             _buffer = new byte[capacity];
             _capacity = capacity;
             _length = 0;
@@ -71,6 +73,7 @@ namespace Pelco.Media.Pipeline
         {
             _buffer = buffer ?? throw new ArgumentNullException("Cannot create buffer from null byte[]");
 
+            _disposed = false;
             _startIndex = 0;
             _position = 0;
             _length = buffer.Length;
@@ -99,6 +102,7 @@ namespace Pelco.Media.Pipeline
                 throw new ArgumentOutOfRangeException($"Cannot create buffer '{count}' bytes are not available starting at '{index}'");
             }
 
+            _disposed = false;
             _buffer = buffer;
             _startIndex = index;
             _position = index;
@@ -727,9 +731,27 @@ namespace Pelco.Media.Pipeline
 
         public void Dispose()
         {
-            _isOpen = false;
-            _isExpandable = false;
-            _readOnly = true;
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    _isOpen = false;
+                    _isExpandable = false;
+                    _readOnly = true;
+                    _startIndex = 0;
+                    _capacity = 0;
+                    _length = 0;
+                    _buffer = null;
+                }
+
+                _disposed = true;
+            }
         }
 
         #endregion

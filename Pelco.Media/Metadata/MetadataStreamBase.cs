@@ -9,19 +9,22 @@ using NLog;
 using Pelco.Media.Common;
 using Pelco.Media.Metadata.Api;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Pelco.Media.Metadata
 {
-    public abstract class MetadataStreamBase : IMetadataStream
+    public abstract class MetadataStreamBase : IMetadataStream, IDisposable
     {
         private static readonly Logger LOG = LogManager.GetCurrentClassLogger();
 
+        private bool _disposed;
         private MimeType _filter;
         private VxMetadataPlayer _player;
 
         protected MetadataStreamBase(MimeType filter, Uri rtspEndpoint)
         {
+            _disposed = false;
             _filter = filter ?? MimeType.ANY_APPLICATION;
 
             RtspEndpoint = rtspEndpoint ?? throw new ArgumentNullException("rtspEndpoint cannot be null");
@@ -88,6 +91,28 @@ namespace Pelco.Media.Metadata
             catch (Exception e)
             {
                 LOG.Error($"Received error shuting down metadata player, reason={e.Message}");
+            }
+        }
+
+        /// <summary>
+        /// <see cref="IDisposable.Dispose"/>
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    _player?.Dispose();
+                }
+
+                _disposed = true;
             }
         }
 

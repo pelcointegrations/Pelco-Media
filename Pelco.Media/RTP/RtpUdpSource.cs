@@ -15,7 +15,7 @@ using System.Net.Sockets;
 
 namespace Pelco.Media.RTP
 {
-    public class RtpUdpSource : IRtpSource
+    public sealed class RtpUdpSource : IRtpSource, IDisposable
     {
         private static readonly Logger LOG = LogManager.GetCurrentClassLogger();
 
@@ -82,8 +82,13 @@ namespace Pelco.Media.RTP
         {
             LOG.Debug("Stopping RtpUdpSource");
 
-            _rtpChannel.Stop();
-            _rtcpChannel.Stop();
+            Dispose();
+        }
+
+        public void Dispose()
+        {
+            _rtpChannel?.Dispose();
+            _rtcpChannel?.Dispose();
         }
 
         private bool FindAvailablePorts(out int rtpPort, out int rtcpPort)
@@ -113,7 +118,7 @@ namespace Pelco.Media.RTP
                                                              .Any(l => l.Port != port);
         }
 
-        private class UdpChannel : SourceBase
+        private sealed class UdpChannel : SourceBase, IDisposable
         {
             private static readonly int READ_BUFFER_SIZE = 1600; // bytes
             private static readonly int RECEIVE_BUFFER_SIZE = 1024 * 1024; // 1M
@@ -173,11 +178,16 @@ namespace Pelco.Media.RTP
 
             public override void Stop()
             {
+                Dispose();
+            }
+
+            public void Dispose()
+            {
                 lock (_startLock)
                 {
                     try
                     {
-                        _source.Close();
+                        _source?.Dispose();
 
                         _started = false;
 

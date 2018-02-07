@@ -16,7 +16,7 @@ namespace Pelco.Media.Pipeline.Sinks
     /// A media pipeline udp sink.  All receieved byte buffers are sent out
     /// to the configured udp socket.
     /// </summary>
-    public class UdpSink : ISink
+    public sealed class UdpSink : ISink, IDisposable
     {
         private static readonly Logger LOG = LogManager.GetCurrentClassLogger();
 
@@ -54,8 +54,7 @@ namespace Pelco.Media.Pipeline.Sinks
         /// </summary>
         public void Stop()
         {
-            _socket.Close();
-            _socket.Dispose();
+            Dispose();
         }
 
         /// <summary>
@@ -88,9 +87,14 @@ namespace Pelco.Media.Pipeline.Sinks
             return true;
         }
 
-        public virtual void PushEvent(MediaEvent e)
+        public void PushEvent(MediaEvent e)
         {
             UpstreamLink?.OnMediaEvent(e);
+        }
+
+        public void Dispose()
+        {
+            _socket?.Dispose();
         }
     }
 }

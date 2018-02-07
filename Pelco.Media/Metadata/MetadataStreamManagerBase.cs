@@ -18,10 +18,12 @@ namespace Pelco.Media.Metadata
     {
         private static readonly Logger LOG = LogManager.GetCurrentClassLogger();
 
+        private bool _disposed;
         protected ConcurrentDictionary<string, IMetadataStream> _streams;
 
         protected MetadataStreamManagerBase()
         {
+            _disposed = false;
             _streams = new ConcurrentDictionary<string, IMetadataStream>();
         }
 
@@ -114,8 +116,22 @@ namespace Pelco.Media.Metadata
 
         public async void Dispose()
         {
-            await StopAll();
-            _streams.Clear();
+            await Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual async Task Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    await StopAll();
+                    _streams.Clear();
+                }
+
+                _disposed = true;
+            }
         }
     }
 }

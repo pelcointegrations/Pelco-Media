@@ -21,11 +21,13 @@ namespace Pelco.Media.RTP
         private readonly object SessionLock = new object();
 
         private bool _started;
+        private bool _disposed;
         private IRtpSource _source;
 
         public RtpSession(MediaTrack track, Session session, IRtpSource source)
         {
             _started = false;
+            _disposed = false;
             _source = source;
             Pipelines = new List<MediaPipeline>();
 
@@ -86,9 +88,10 @@ namespace Pelco.Media.RTP
                         return;
                     }
 
-                    _source.Stop();
+                    _source?.Stop();
 
                     Pipelines.ForEach(p => p.Stop());
+                    Pipelines.Clear();
                 }
                 catch (Exception e)
                 {
@@ -110,10 +113,22 @@ namespace Pelco.Media.RTP
 
         public void Dispose()
         {
-            LOG.Debug($"Disposing RtpSession '{ID}'");
-            Stop();
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
 
-            Pipelines.Clear();
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    LOG.Debug($"Disposing RtpSession '{ID}'");
+                    Stop();
+                }
+
+                _disposed = true;
+            }
         }
     }
 }

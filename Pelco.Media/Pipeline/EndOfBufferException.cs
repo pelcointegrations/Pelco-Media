@@ -12,6 +12,7 @@ namespace Pelco.Media.Pipeline
     /// <summary>
     /// Reports that th end of the <see cref="ByteBuffer"/> has been meet.
     /// </summary>
+    [Serializable]
     class EndOfBufferException : Exception
     {
         /// <summary>

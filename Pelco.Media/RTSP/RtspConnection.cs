@@ -17,7 +17,7 @@ namespace Pelco.Media.RTSP
     /// <summary>
     /// RTSP TCP transport.
     /// </summary>
-    public class RtspConnection : IRtspConnection, IDisposable
+    public sealed  class RtspConnection : IRtspConnection, IDisposable
     {
         private static readonly Logger LOG = LogManager.GetCurrentClassLogger();
 
@@ -242,8 +242,8 @@ namespace Pelco.Media.RTSP
         /// </summary>
         public void Dispose()
         {
-            _stream.Dispose();
-            _tcpClient.Dispose();
+            _stream?.Dispose();
+            _tcpClient?.Dispose();
         }
 
         #endregion

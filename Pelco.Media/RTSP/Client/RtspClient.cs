@@ -19,7 +19,7 @@ namespace Pelco.Media.RTSP.Client
 {
     public delegate void RtspResponseCallback(RtspResponse response);
 
-    public class RtspClient : IDisposable
+    public sealed class RtspClient : IDisposable
     {
         public static readonly int DEFAULT_RTSP_PORT = 554;
 
@@ -89,8 +89,8 @@ namespace Pelco.Media.RTSP.Client
             {
                 LOG.Info($"Disposing RTSP client connected to '{_connection.Endpoint}'");
 
-                _listener.Stop();
-                _rtpQueue.Dispose();
+                _listener?.Stop();
+                _rtpQueue?.Dispose();
 
                 foreach (var cb in _callbacks)
                 {
