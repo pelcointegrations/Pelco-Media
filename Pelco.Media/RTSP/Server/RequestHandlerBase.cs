@@ -12,14 +12,39 @@ namespace Pelco.Media.RTSP.Server
     /// </summary>
     public abstract class RequestHandlerBase : IRequestHandler
     {
+        /// <summary>
+        /// <see cref="IRequestHandler.Describe(RtspRequest)"/>
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         public abstract RtspResponse Describe(RtspRequest request);
 
+        /// <summary>
+        /// <see cref="IRequestHandler.GetParamater(RtspRequest)"/>
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         public abstract RtspResponse GetParamater(RtspRequest request);
 
+        /// <summary>
+        /// <see cref="IRequestHandler.Play(RtspRequest)"/>
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         public abstract RtspResponse Play(RtspRequest request);
 
+        /// <summary>
+        /// <see cref="IRequestHandler.SetUp(RtspRequest)"/>
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         public abstract RtspResponse SetUp(RtspRequest request);
 
+        /// <summary>
+        /// <see cref="IRequestHandler.TearDown(RtspRequest)"/>
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         public abstract RtspResponse TearDown(RtspRequest request);
         
         /// <summary>

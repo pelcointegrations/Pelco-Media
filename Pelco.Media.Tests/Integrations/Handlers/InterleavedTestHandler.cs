@@ -12,57 +12,16 @@ using System;
 
 namespace Pelco.Media.Tests.Integrations.Handlers
 {
-    public class InterleavedTestHandler : RequestHandlerBase
+    public class InterleavedTestHandler : DefaultRequestHandler
     {
         private const int PAYLOAD_TYPE = 98;
 
         private SessionSpy _spy;
         private int _currentChannel = 0;
-        private RtspSessionManager _sessionManager;
 
-        public InterleavedTestHandler(SessionSpy spy)
+        public InterleavedTestHandler(SessionSpy spy) : base()
         {
             _spy = spy ?? throw new ArgumentNullException("Spy cannot be null");
-            _sessionManager = new RtspSessionManager();
-        }
-
-        public override void Close()
-        {
-            _sessionManager.Dispose();
-        }
-
-        public override RtspResponse Describe(RtspRequest request)
-        {
-            return RtspResponse.CreateBuilder()
-                               .Status(RtspResponse.Status.Ok)
-                               .Body(CreateSDP(request))
-                               .Build();
-        }
-
-        public override RtspResponse GetParamater(RtspRequest request)
-        {
-            var builder = RtspResponse.CreateBuilder().Status(RtspResponse.Status.Ok);
-
-            var sessionId = request.Session;
-            if (string.IsNullOrEmpty(sessionId) || !_sessionManager.RefreshSession(sessionId))
-            {
-                return builder.Status(RtspResponse.Status.SessionNotFound).Build();
-            }
-
-            return builder.Build();
-        }
-
-        public override RtspResponse Play(RtspRequest request)
-        {
-            var builder = RtspResponse.CreateBuilder().Status(RtspResponse.Status.Ok);
-
-            var sessionId = request.Session;
-            if (string.IsNullOrEmpty(sessionId) || !_sessionManager.PlaySession(sessionId))
-            {
-                return builder.Status(RtspResponse.Status.SessionNotFound).Build();
-            }
-
-            return builder.Build();
         }
 
         public override RtspResponse SetUp(RtspRequest request)
@@ -98,20 +57,7 @@ namespace Pelco.Media.Tests.Integrations.Handlers
             }
         }
 
-        public override RtspResponse TearDown(RtspRequest request)
-        {
-            var builder = RtspResponse.CreateBuilder().Status(RtspResponse.Status.Ok);
-
-            var sessionId = request.Session;
-            if (string.IsNullOrEmpty(sessionId) || !_sessionManager.TearDownSession(sessionId))
-            {
-                return builder.Status(RtspResponse.Status.SessionNotFound).Build();
-            }
-
-            return builder.Build();
-        }
-
-        private SessionDescription CreateSDP(RtspRequest request)
+        protected override SessionDescription CreateSDP(RtspRequest request)
         {
             var origin = SessionOriginator.CreateBuilder()
                                           .Username("-")

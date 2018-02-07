@@ -139,6 +139,7 @@
     <Compile Include="RTSP\SDP\SdpParseException.cs" />
     <Compile Include="RTSP\SDP\TimeDescription.cs" />
     <Compile Include="RTSP\SDP\TimeZone.cs" />
+    <Compile Include="RTSP\Server\DefaultRequestHandler.cs" />
     <Compile Include="RTSP\Server\RequestHandlerBase.cs" />
     <Compile Include="RTSP\Server\DefaultRequestDispatcher.cs" />
     <Compile Include="RTSP\Server\IRequestDispatcher.cs" />
