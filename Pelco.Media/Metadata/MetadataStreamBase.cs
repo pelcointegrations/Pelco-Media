@@ -41,7 +41,7 @@ namespace Pelco.Media.Metadata
 
         public bool IsRunning { get; private set; }
 
-        public abstract IPipelineCreator GetPipelineCreator();
+        public abstract IPipelineFactory GetPipelineFactory();
 
         public async Task JumpToLive()
         {
@@ -125,7 +125,7 @@ namespace Pelco.Media.Metadata
                 {
                     var config = new PlayerConfiguration()
                     {
-                        PipelineCreator = GetPipelineCreator(),
+                        PipelineFactory = GetPipelineFactory(),
                         TypeFilter = _filter,
                         Uri = dataEndpoint
                     };

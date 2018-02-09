@@ -16,7 +16,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Net;
-using System.Threading.Tasks;
 using System.Timers;
 
 namespace Pelco.Media.Metadata
@@ -470,7 +469,7 @@ namespace Pelco.Media.Metadata
             {
                 LOG.Debug($"Tearing RTSP session '{session.ID}' at '{session.Track.ControlUri}'");
 
-                _client.Request().Session(session.ID).TeardownAsync((res) =>
+                _client.Request().Uri(_currentUri).Session(session.ID).TeardownAsync((res) =>
                 {
                     if (res.ResponseStatus.Code >= RtspResponse.Status.BadRequest.Code)
                     {
@@ -505,7 +504,7 @@ namespace Pelco.Media.Metadata
             {
                 _refreshInterval = timeoutSecs;
 
-                _sessionRefreshTimer.Interval = (timeoutSecs - 3) * 1000;
+                _sessionRefreshTimer.Interval = (timeoutSecs - 5) * 1000;
                 _sessionRefreshTimer.Start();
             }
             else if (timeoutSecs < _refreshInterval)
@@ -530,33 +529,30 @@ namespace Pelco.Media.Metadata
             }
         }
 
-        private async void SessionRefreshTimer_Elapsed(object sender, ElapsedEventArgs e)
+        private void SessionRefreshTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            // Perform our refresh in the background.
-            await Task.Run(() =>
+            lock (SourceLock)
             {
-                lock (SourceLock)
-                {
-                        // If there are multiple RTSP sessions available refreshing a single one
-                        // with the base (aggragate) uri should refresh them all.
-                        var sessionId = _sessions[0].ID;
+                // If there are multiple RTSP sessions available refreshing a single one
+                // with the base (aggragate) uri should refresh them all.
+                var sessionId = _sessions[0].ID;
 
-                    try
+                try
+                {
+                    LOG.Info($"Refreshing metadata session at '{_currentUri}'");
+                    _client.Request().Uri(_currentUri).Session(sessionId).GetParameterAsync((res) =>
                     {
-                        _client.Request().Session(sessionId).GetParameterAsync((res) =>
+                        if (res.ResponseStatus.Code >= RtspResponse.Status.BadRequest.Code)
                         {
-                            if (res.ResponseStatus.Code >= RtspResponse.Status.BadRequest.Code)
-                            {
-                                LOG.Error($"Failed to refresh session '{sessionId}' received {res.ResponseStatus}");
-                            }
-                        });
-                    }
-                    catch (Exception ex)
-                    {
-                        LOG.Error($"Unable to perform session refresh on session {sessionId}, reason: {ex.Message}");
-                    }
+                            LOG.Error($"Failed to refresh session '{sessionId}' received {res.ResponseStatus}");
+                        }
+                    });
                 }
-            });
+                catch (Exception ex)
+                {
+                    LOG.Error($"Unable to perform session refresh on session {sessionId}, reason: {ex.Message}");
+                }
+            }
         }
 
         private string ToRtspAbsoluteRangeValue(DateTime dateTime)

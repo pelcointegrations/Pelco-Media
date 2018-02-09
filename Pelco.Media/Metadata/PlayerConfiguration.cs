@@ -35,8 +35,8 @@ namespace Pelco.Media.Metadata
         public MimeType TypeFilter { get; set; }
 
         /// <summary>
-        /// A <see cref="PipelineCreator"/> used to create a metadata specific processing pipeline.
+        /// A <see cref="PipelineFactory"/> used to create a metadata specific processing pipeline.
         /// </summary>
-        public IPipelineCreator PipelineCreator { get; set; }
+        public IPipelineFactory PipelineFactory { get; set; }
     }
 }

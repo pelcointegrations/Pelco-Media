@@ -60,6 +60,7 @@ namespace Pelco.Media.Tests.Integrations.Handlers
         {
             return RtspResponse.CreateBuilder()
                                .Status(RtspResponse.Status.Ok)
+                               .AddHeader(RtspHeaders.Names.SESSION, request.Session)
                                .AddHeader(CALLED_METHOD_HEADER, "GET_PARAMATER")
                                .Build();
         }

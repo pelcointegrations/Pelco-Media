@@ -46,7 +46,7 @@ namespace Pelco.Media.Metadata
             {
                 throw new ArgumentException("Player configuration must provide an RTSP uri.");
             }
-            else if (_config.PipelineCreator == null)
+            else if (_config.PipelineFactory == null)
             {
                 throw new ArgumentException("Player configuration must provide a IPipelineCreator.");
             }
@@ -101,7 +101,7 @@ namespace Pelco.Media.Metadata
                 _isLive = !playAt.HasValue;
                 _source.Play(_transformSource, playAt);
 
-                _pipeline = _config.PipelineCreator.CreatePipeline(_transformSource, _isLive);
+                _pipeline = _config.PipelineFactory.CreatePipeline(_transformSource, _isLive);
 
                 _pipeline.Start();
             }
@@ -122,7 +122,7 @@ namespace Pelco.Media.Metadata
                     _pipeline.SetFlushing(true);
                     _pipeline.Stop();
 
-                    _pipeline = _config.PipelineCreator.CreatePipeline(_transformSource, _isLive);
+                    _pipeline = _config.PipelineFactory.CreatePipeline(_transformSource, _isLive);
                     _pipeline.Start();
                 }
 
@@ -159,7 +159,7 @@ namespace Pelco.Media.Metadata
                     _pipeline.SetFlushing(true);
                     _pipeline.Stop();
 
-                    _pipeline = _config.PipelineCreator.CreatePipeline(_transformSource, _isLive);
+                    _pipeline = _config.PipelineFactory.CreatePipeline(_transformSource, _isLive);
                     _pipeline.SetFlushing(false);
                     _pipeline.Start();
 

@@ -168,7 +168,7 @@ namespace Pelco.Media.RTSP
                 
                 foreach (var entry in _headers)
                 {
-                    request.Headers.Add(entry.Key, entry.Value);
+                    request.Headers[entry.Key] = entry.Value;
                 }
 
                 return request;

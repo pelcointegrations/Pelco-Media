@@ -10,15 +10,16 @@ using System.Threading.Tasks;
 
 namespace Pelco.Media.Metadata.Api
 {
-    public interface IMetadataStreamManager
+    public interface IMetadataStreamManager : IDisposable
     {
         /// <summary>
         /// Registers metadata stream to be managed. If the stream has not been started
         /// it will be started before it is registered.
         /// </summary>
         /// <param name="stream">The stream to register</param>
+        /// <param name="startTime">The time to start streaming at</param>
         /// <returns></returns>
-        Task<string> RegisterStream(IMetadataStream stream);
+        Task<string> RegisterStream(IMetadataStream stream, DateTime? startTime = null);
 
         /// <summary>
         /// Stops the stream associated with the provided stream id.

@@ -12,7 +12,7 @@ namespace Pelco.Media.Metadata.Api
     /// <summary>
     /// Used by the <see cref="VxMetadataPlayer"/> to build a metadata processing pipeline.
     /// </summary>
-    public interface IPipelineCreator
+    public interface IPipelineFactory
     {
         /// <summary>
         /// To use a <see cref="VxMetadataPlayer"/> an implementer must create a user defined <see cref="MediaPipeline"/>

@@ -12,15 +12,22 @@ using Pelco.UI.VideoOverlay.Overlays;
 
 namespace Pelco.UI.VideoOverlay
 {
-    public class VideoOverlayCanvasBase<T> : IVideoOverlayCanvas<T>
+    public class VideoOverlayCanvasBase<T> : IVideoOverlayCanvas<T>, IDisposable
     {
+        private bool _disposed;
         private VideoOverlayCanvas _canvas;
         private VideoOverlayCanvasViewModel _viewModel;
 
         public VideoOverlayCanvasBase()
         {
+            _disposed = false;
             _viewModel = new VideoOverlayCanvasViewModel();
             _canvas = new VideoOverlayCanvas(_viewModel);
+        }
+
+        ~VideoOverlayCanvasBase()
+        {
+            Dispose(false);
         }
 
         public bool IsLiveStream
@@ -100,6 +107,23 @@ namespace Pelco.UI.VideoOverlay
         public void PushEvent(MediaEvent e)
         {
             UpstreamLink?.OnMediaEvent(e);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    _viewModel.Dispose();
+                }
+            }
         }
     }
 }

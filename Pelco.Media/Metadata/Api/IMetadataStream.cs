@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Pelco.Media.Metadata.Api
 {
-    public interface IMetadataStream
+    public interface IMetadataStream : IDisposable
     {
         /// <summary>
         /// Gets the RTSP endpoint of the metadata stream.

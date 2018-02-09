@@ -94,11 +94,6 @@ namespace Pelco.Media.Metadata
             return await Task.FromResult(id);
         }
 
-        public Task<string> RegisterStream(IMetadataStream stream)
-        {
-            throw new NotImplementedException();
-        }
-
         public virtual async Task Stop(string streamId)
         {
             if (_streams.ContainsKey(streamId))

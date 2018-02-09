@@ -68,6 +68,7 @@ namespace Pelco.Media.Tests.Integrations
             var request = RtspRequest.CreateBuilder()
                                      .Uri(_fixture.ServerUriEndpoint)
                                      .Method(RtspRequest.RtspMethod.GET_PARAMETER)
+                                     .AddHeader(RtspHeaders.Names.SESSION, "test-id")
                                      .Build();
 
             var response = _fixture.Client.Send(request);
@@ -75,12 +76,14 @@ namespace Pelco.Media.Tests.Integrations
             Assert.True(response.ResponseStatus.Is(RtspResponse.Status.Ok));
             Assert.Equal(_fixture.NextCseq().ToString(), response.Headers[RtspHeaders.Names.CSEQ]);
             Assert.Equal("GET_PARAMATER", response.Headers[TestRequestHandler.CALLED_METHOD_HEADER]);
+            Assert.Equal("test-id", response.Headers[RtspHeaders.Names.SESSION]);
 
             // Test IRtspInvokder method
-            response = _fixture.Client.Request().GetParameter();
+            response = _fixture.Client.Request().Session("test-id").GetParameter();
             Assert.True(response.ResponseStatus.Is(RtspResponse.Status.Ok));
             Assert.Equal(_fixture.NextCseq().ToString(), response.Headers[RtspHeaders.Names.CSEQ]);
             Assert.Equal("GET_PARAMATER", response.Headers[TestRequestHandler.CALLED_METHOD_HEADER]);
+            Assert.Equal("test-id", response.Headers[RtspHeaders.Names.SESSION]);
         }
 
         [Fact]

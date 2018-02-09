@@ -53,7 +53,7 @@
     <Compile Include="Common\NtpTime.cs" />
     <Compile Include="Metadata\Api\IMetadataStream.cs" />
     <Compile Include="Metadata\Api\IMetadataStreamManager.cs" />
-    <Compile Include="Metadata\Api\IPipelineCreator.cs" />
+    <Compile Include="Metadata\Api\IPipelineFactory.cs" />
     <Compile Include="Metadata\MetadataStreamBase.cs" />
     <Compile Include="Metadata\MetadataStreamManagerBase.cs" />
     <Compile Include="Metadata\PlayerConfiguration.cs" />

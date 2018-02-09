@@ -7,8 +7,6 @@
 //
 using Pelco.UI.VideoOverlay.Overlays;
 using NLog;
-using Prism.Commands;
-using Prism.Mvvm;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -16,16 +14,18 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using NodaTime;
+using System.ComponentModel;
 
 namespace Pelco.UI.VideoOverlay
 {
-    public class VideoOverlayCanvasViewModel : BindableBase
+    public class VideoOverlayCanvasViewModel : INotifyPropertyChanged, IDisposable
     {
         private static readonly object PlaybackLock = new object();
         private static readonly Logger LOG = LogManager.GetCurrentClassLogger();
 
         private bool _isDirty;
         private double _scale;
+        private bool _disposed;
         private long _anchorTime;
         private long _initiatedTime;
         private FrameworkElement _control;
@@ -43,6 +43,7 @@ namespace Pelco.UI.VideoOverlay
         {
             IsLiveStream = true;
 
+            _disposed = false;
             _overlays = new ConcurrentDictionary<string, OverlayDrawing>();
             _drawLoopTokenSrc = new CancellationTokenSource();
             _videoWindowRotation = 0.0;
@@ -50,6 +51,8 @@ namespace Pelco.UI.VideoOverlay
             _normalizedDPTZWindow = new Rect(0.0, 0.0, 1.0, 1.0); // default to whole frame (normalized to stream frame)
             _normalizedViewWindow = new Rect(0.0, 0.0, 0.0, 0.0);  // default to zero size to force us to derive from  aspect ratio
         }
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public bool IsLiveStream { get; set; }
 
@@ -64,12 +67,11 @@ namespace Pelco.UI.VideoOverlay
             {
                 lock (this)
                 {
-                    SetProperty(ref _overlayBitmap, value);
+                    _overlayBitmap = value;
+                    OnPropertyChange(nameof(OverlayBitmap));
                 }
             }
         }
-
-        public DelegateCommand<FrameworkElement> LoadedCmd { get; private set; }
 
         public void AddOverlay(OverlayDrawing overlay)
         {
@@ -139,10 +141,22 @@ namespace Pelco.UI.VideoOverlay
             }
         }
 
+        public void Dispose()
+        {
+            if (!_disposed)
+            {
+                CompositionTargetEx.Rendering -= CompositionTarget_Rendering;
+                _overlays.Clear();
+                _overlayBitmap.Clear();
+
+                _disposed = true;
+            }
+        }
+
+
         public void Shutdown()
         {
-            CompositionTargetEx.Rendering -= CompositionTarget_Rendering;
-            _overlays.Clear();
+            Dispose();
 
             LOG.Info("VideoOverlay canvas has been shutdown");
         }
@@ -408,6 +422,12 @@ namespace Pelco.UI.VideoOverlay
 
                 return whereWeShouldBe.ToDateTimeUtc();
             }
+        }
+
+        private void OnPropertyChange(string name)
+        {
+            var handler = PropertyChanged;
+            handler?.Invoke(this, new PropertyChangedEventArgs(name));
         }
     }
 }
