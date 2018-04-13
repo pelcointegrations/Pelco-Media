@@ -147,15 +147,23 @@ namespace Pelco.Media.Pipeline.Sinks
 
             public override bool WriteBuffer(ByteBuffer buffer)
             {
-                if (!_stop.WaitOne(0))
+                try
                 {
-                    if (!_queue.TryAdd(buffer))
+                    if (!_stop.WaitOne(0))
                     {
-                        LOG.Warn("Dropping buffer queue is full and cannot process the buffer");
+                        if (!_queue.TryAdd(buffer))
+                        {
+                            LOG.Warn("Dropping buffer queue is full and cannot process the buffer");
+                        }
                     }
-                }
 
-                return true;
+                    return true;
+                }
+                catch (ObjectDisposedException)
+                {
+                    // The sink was stopped and disposed.
+                    return false;
+                }
             }
 
             public void Dispose()
