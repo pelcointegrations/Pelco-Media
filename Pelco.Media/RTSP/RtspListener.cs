@@ -146,6 +146,11 @@ namespace Pelco.Media.RTSP
                                 HandleRequest(ms);
                             }
                         }
+                        else if (bytesRead == 0)
+                        {
+                            // Zero is end of stream
+                            _connection.Close();
+                        }
                     }
                 }
                 catch (ObjectDisposedException e)
