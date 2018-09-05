@@ -9,7 +9,6 @@ using NLog;
 using Pelco.Media.Common;
 using Pelco.Media.Metadata.Api;
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Pelco.Media.Metadata

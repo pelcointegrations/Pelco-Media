@@ -5,16 +5,16 @@
 // transmitted in any form by any means or for any purpose without the express
 // written permission of Pelco.
 //
-using Pelco.UI.VideoOverlay.Overlays;
 using NLog;
+using NodaTime;
+using Pelco.UI.VideoOverlay.Overlays;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Threading;
 using System.Windows;
 using System.Windows.Media.Imaging;
-using NodaTime;
-using System.ComponentModel;
 
 namespace Pelco.UI.VideoOverlay
 {

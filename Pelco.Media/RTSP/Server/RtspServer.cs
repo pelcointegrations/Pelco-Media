@@ -133,9 +133,9 @@ namespace Pelco.Media.RTSP.Server
                 {
                     var msg = _messages.Take();
 
-                    if ((msg != null) && (msg is RtspRequest))
+                    if ((msg != null) && msg is RtspRequest request)
                     {
-                        HandleRequest(msg as RtspRequest);
+                        HandleRequest(request);
                     }
                 }
             }
@@ -171,6 +171,15 @@ namespace Pelco.Media.RTSP.Server
 
                             response.Headers[RtspHeaders.Names.CSEQ] = receivedCseq.ToString();
                             listener.SendResponse(response);
+
+                            // Remove listener on teardown.
+                            // VLC will terminate the connection and the listener will stop itself properly.
+                            // Some clients will send Teardown but keep the connection open, in this type scenario we'll close it.
+                            if (request.Method == RtspRequest.RtspMethod.TEARDOWN)
+                            {
+                                listener.Stop();
+                                _listeners.Remove(listener.Endpoint.ToString());
+                            }
                         }
                     }
                     catch (Exception e)
@@ -181,7 +190,7 @@ namespace Pelco.Media.RTSP.Server
                                                           .Status(RtspResponse.Status.InternalServerError)
                                                           .Build());
                     }
-                    
+
                 });
             }
             else

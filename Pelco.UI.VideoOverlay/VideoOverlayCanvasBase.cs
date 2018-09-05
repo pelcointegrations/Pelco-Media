@@ -5,10 +5,10 @@
 // transmitted in any form by any means or for any purpose without the express
 // written permission of Pelco.
 //
-using System;
-using System.Windows;
 using Pelco.Media.Pipeline;
 using Pelco.UI.VideoOverlay.Overlays;
+using System;
+using System.Windows;
 
 namespace Pelco.UI.VideoOverlay
 {

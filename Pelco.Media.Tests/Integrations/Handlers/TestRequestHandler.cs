@@ -5,9 +5,9 @@
 // transmitted in any form by any means or for any purpose without the express
 // written permission of Pelco.
 //
-using Pelco.Media.RTSP.Server;
 using Pelco.Media.RTSP;
 using Pelco.Media.RTSP.SDP;
+using Pelco.Media.RTSP.Server;
 
 namespace Pelco.Media.Tests.Integrations.Handlers
 {

@@ -6,7 +6,6 @@
 // written permission of Pelco.
 //
 using Pelco.Media.RTSP.SDP;
-using System;
 
 namespace Pelco.Media.RTSP.Server
 {

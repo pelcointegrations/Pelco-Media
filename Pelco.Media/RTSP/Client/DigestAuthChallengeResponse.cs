@@ -5,11 +5,11 @@
 // transmitted in any form by any means or for any purpose without the express
 // written permission of Pelco.
 //
+using Pelco.Media.Common;
 using System;
 using System.Linq;
-using System.Text;
 using System.Security.Cryptography;
-using Pelco.Media.Common;
+using System.Text;
 
 namespace Pelco.Media.RTSP.Client
 {

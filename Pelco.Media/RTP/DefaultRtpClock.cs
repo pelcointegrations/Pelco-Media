@@ -5,8 +5,8 @@
 // transmitted in any form by any means or for any purpose without the express
 // written permission of Pelco.
 //
-using System;
 using Pelco.Media.Pipeline;
+using System;
 
 namespace Pelco.Media.RTP
 {
