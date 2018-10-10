@@ -13,7 +13,7 @@ namespace Pelco.Media.RTSP.SDP
 {
     public class SessionOriginator
     {
-        private static readonly Regex Regex = new Regex(@"^o\s*=\s*(.+)\s+(\d+)\s+(\d+)\s+(IN)\s+(IP4|IP6)\s+(.+)", RegexOptions.Compiled);
+        private static readonly Regex Regex = new Regex(@"^o\s*=\s*(.+)\s+(-*\d+)\s+(\d+)\s+(IN)\s+(IP4|IP6)\s+(.+)", RegexOptions.Compiled);
 
         public string Username { get; private set; }
 
@@ -59,7 +59,7 @@ namespace Pelco.Media.RTSP.SDP
                                   .AddrType((AddressType)Enum.Parse(typeof(AddressType), match.Groups[5].Value))
                                   .UnicastAddress(match.Groups[6].Value)
                                   .Build();
-            
+
         }
 
         public static Builder CreateBuilder()
@@ -127,12 +127,12 @@ namespace Pelco.Media.RTSP.SDP
 
                 return this;
             }
-            
+
             public Builder AddrType(AddressType type)
             {
                 _addrType = type;
 
-                return this; 
+                return this;
             }
 
             public SessionOriginator Build()
