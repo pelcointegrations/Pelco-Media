@@ -35,5 +35,7 @@ namespace Pelco.UI.VideoOverlay.Overlays
         /// Gets and sets the color used to draw the rectangle's border
         /// </summary>
         public Color BorderColor { get; set; } = Colors.Transparent;
-    }
+ 
+        public Color FillColor { get; set; } = Colors.Transparent;
+  }
 }

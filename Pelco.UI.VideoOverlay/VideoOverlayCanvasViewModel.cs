@@ -12,6 +12,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Media.Imaging;
@@ -171,6 +172,25 @@ namespace Pelco.UI.VideoOverlay
             {
                 DrawRectangle(drawing as RectangleOverlay);
             }
+            else if (drawing is PolygonOverlay)
+            {
+                DrawPolygon(drawing as PolygonOverlay);
+            }
+        }
+
+        private void DrawPolygon(PolygonOverlay polygon)
+        {
+          var points = polygon.Points
+                              .Select(p => ToActualPoint(p))
+                              .Select(p => new List<int> { (int)p.X, (int)p.Y })
+                              .SelectMany(p => p).ToArray();
+
+          OverlayBitmap.DrawPolyline(points, polygon.BorderColor);
+
+          if (polygon.FillColor != null)
+          {
+            OverlayBitmap.FillPolygon(points, polygon.FillColor);
+          }
         }
 
         private void DrawEllipse(EllipseOverlay ellipse)
@@ -178,13 +198,25 @@ namespace Pelco.UI.VideoOverlay
             var ul = ToActualPoint(ellipse.UpperLeft);
             var br = ToActualPoint(ellipse.BottomRight);
             OverlayBitmap.DrawEllipse((int)ul.X, (int)ul.Y, (int)br.X, (int)br.Y, ellipse.BorderColor);
-        }
+
+
+            if (ellipse.FillColor != null)
+            {
+              OverlayBitmap.FillEllipse((int)ul.X, (int)ul.Y, (int)br.X, (int)br.Y, ellipse.FillColor);
+            }
+    }
 
         private void DrawRectangle(RectangleOverlay overlay)
         {
             var ul = ToActualPoint(overlay.UpperLeft);
             var br = ToActualPoint(overlay.BottomRight);
+
             OverlayBitmap.DrawRectangle((int)ul.X, (int)ul.Y, (int)br.X, (int)br.Y, overlay.BorderColor);
+
+            if (overlay.FillColor != null)
+            {
+              OverlayBitmap.FillRectangle((int)ul.X, (int)ul.Y, (int)br.X, (int)br.Y, overlay.FillColor);
+            }
         }
 
         private void CreateBitmap<T>(T width, T height)
@@ -199,6 +231,7 @@ namespace Pelco.UI.VideoOverlay
             int iHeight = Convert.ToInt32(height);
             var bitmap = BitmapFactory.New(iWidth, iHeight);
             OverlayBitmap = BitmapFactory.ConvertToPbgra32Format(bitmap);
+            _isDirty = true; // Make sure to re-set the dirty flag so that we draw still when the bitmap is updated.
 
             LOG.Info($"Video overlay bitmap resized to {iWidth}x{iHeight}");
         }
